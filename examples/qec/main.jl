@@ -1,6 +1,6 @@
 using TensorQEC, OMEinsumContractionOrders
 
-function main(optimizer; filename=nothing)
+function main(optimizer; folder=nothing)
     @info "Running QEC with optimizer: $(optimizer)"
     for d in [9, 13, 17, 21]
         @info "Running surface code for d = $d"
@@ -9,7 +9,7 @@ function main(optimizer; filename=nothing)
 
         # NOTE: TreeSA gives sc = 16, tc=21.74 for d = 9
         @info "Contraction complexity: $(contraction_complexity(ct.cd.net)), time cost: $(time_elapsed)s"
-        filename !== nothing && TensorQEC.OMEinsum.writejson(filename, ct.cd.net.code)
+        folder !== nothing && TensorQEC.OMEinsum.writejson(joinpath(folder, "qec_d=$(d).json"), ct.cd.net.code)
         return contraction_complexity(ct.cd.net)
     end
 end

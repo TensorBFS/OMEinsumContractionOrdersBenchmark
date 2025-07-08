@@ -109,9 +109,9 @@ weakdeps = ["SparseArrays"]
 
 [[deps.CliqueTrees]]
 deps = ["AbstractTrees", "ArgCheck", "FillArrays", "FixedSizeArrays", "Graphs", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "77fe39ad6b957b577599f45f5afa9154e206deb4"
+git-tree-sha1 = "3e04e1504872243c908e6e56c01c8056e99434cf"
 uuid = "60701a23-6482-424a-84db-faee86b9b1f8"
-version = "1.7.3"
+version = "1.7.4"
 
     [deps.CliqueTrees.extensions]
     AMDExt = "AMD"
@@ -746,9 +746,9 @@ version = "0.8.8"
 
 [[deps.OMEinsumContractionOrders]]
 deps = ["AbstractTrees", "CliqueTrees", "DataStructures", "JSON", "SparseArrays", "StatsBase", "Suppressor", "TreeWidthSolver"]
-path = "../.."
+git-tree-sha1 = "9eca7763ff0920f3f9d15bb9cf6b6b2c66e14393"
 uuid = "6f22d1fd-8eed-4bb7-9776-e7d684900715"
-version = "0.9.11"
+version = "0.9.10"
 
     [deps.OMEinsumContractionOrders.extensions]
     KaHyParExt = ["KaHyPar"]

@@ -1,21 +1,38 @@
 JL = julia --project
 
-default: init test
-
 init:
-	$(JL) -e 'using Pkg; Pkg.precompile(); Pkg.activate("docs"); Pkg.develop(path="."); Pkg.precompile(); Pkg.activate("examples"); Pkg.develop(path="."); Pkg.precompile()'
+	$(JL) -e 'using Pkg; Pkg.instantiate()'
+	for case in inference quantumcircuit nqueens independentset qec; do \
+		echo "Instantiating $${case}"; \
+		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.instantiate()"; \
+	done
+
+dev:
+	$(JL) -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
+	for case in inference quantumcircuit nqueens independentset qec; do \
+		echo "Developing $${case}"; \
+		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.develop(path=\".\"); Pkg.instantiate()"; \
+	done
+
+free:
+	$(JL) -e 'using Pkg; Pkg.free("OMEinsumContractionOrders")'
+	for case in inference quantumcircuit nqueens independentset qec; do \
+		echo "Freeing $${case}"; \
+		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.free(\"OMEinsumContractionOrders\")"; \
+	done
 
 update:
-	$(JL) -e 'using Pkg; Pkg.update(); Pkg.precompile(); Pkg.activate("docs"); Pkg.update(); Pkg.precompile(); Pkg.activate("examples"); Pkg.update(); Pkg.precompile()'
+	$(JL) -e 'using Pkg; Pkg.update()'
+	for case in inference quantumcircuit nqueens independentset qec; do \
+		echo "Updating $${case}"; \
+		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.update()"; \
+	done
 
-test:
-	$(JL) -e 'using Pkg; Pkg.test()'
-
-coverage:
-	$(JL) -e 'using Pkg; Pkg.test(; coverage=true)'
-
-serve:
-	$(JL) -e 'using Pkg; Pkg.activate("docs"); using LiveServer; servedocs(;skip_dirs=["docs/src/assets", "docs/src/generated"], literate_dir="examples")'
+generate-samples:
+	for case in inference quantumcircuit nqueens independentset qec; do \
+		echo "Generating samples for $${case}"; \
+		julia --project=examples/${case} -e "include(joinpath(\"examples\", \"${case}\", \"main.jl\")); main(GreedyMethod(); folder=joinpath(\"examples\", \"${case}\", \"samples\"))"; \
+	done
 
 showme-hypernd:  # QEC does not work with KaHyPar
 	for case in inference quantumcircuit nqueens independentset; do \

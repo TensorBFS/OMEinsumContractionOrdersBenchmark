@@ -5,7 +5,7 @@ function main(optimizer)
     return [single_run(optimizer, case) for case in [:rg3, :ksg]]
 end
 
-function single_run(optimizer, case; filename=nothing)
+function single_run(optimizer, case; folder=nothing)
     if case == :rg3
         @info "Random 3-regular graph of size 200"
         graph = Graphs.random_regular_graph(200, 3; seed=42)
@@ -16,7 +16,7 @@ function single_run(optimizer, case; filename=nothing)
         error("Invalid case: $case")
     end
     time_elapsed = @elapsed net = GenericTensorNetwork(IndependentSet(graph); optimizer)
-    filename !== nothing && GenericTensorNetworks.OMEinsum.writejson(filename, net.code)
+    folder !== nothing && GenericTensorNetworks.OMEinsum.writejson(joinpath(folder, "$(case).json"), net.code)
     @info "Contraction complexity: $(contraction_complexity(net)), time cost: $(time_elapsed)s"
     return contraction_complexity(net)
 end

@@ -95,7 +95,7 @@ using Yao
 using .YaoQASMReader: yaocircuit_from_qasm
 using OMEinsumContractionOrders
 
-function main(optimizer; filename=nothing)
+function main(optimizer; folder=nothing)
     # circuit source: https://github.com/brenjohn/Contraction-Order-Bench/tree/main/data/circuits
     cirq_name = "sycamore_53_20_0"
     @info("Running circuit `$(cirq_name)` with optimizer: $(optimizer)")
@@ -105,6 +105,6 @@ function main(optimizer; filename=nothing)
     c = yaocircuit_from_qasm(qasm_file)
     time_elapsed = @elapsed net = yao2einsum(c; initial_state=Dict(zip(1:nqubits(c), zeros(Int,nqubits(c)))), final_state=Dict(zip(1:nqubits(c), zeros(Int,nqubits(c)))), optimizer)
     @info "Contraction complexity: $(contraction_complexity(net)), time cost: $(time_elapsed)s"
-    filename !== nothing && Yao.YaoToEinsum.writejson(filename, net.code)
+    folder !== nothing && Yao.YaoToEinsum.writejson(joinpath(folder, "$(cirq_name).json"), net.code)
     return contraction_complexity(net)
 end

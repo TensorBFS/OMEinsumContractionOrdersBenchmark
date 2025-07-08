@@ -68,12 +68,12 @@ function generate_3_tensor_network(t9_lattice::TensorNQLattice)
     return EinCode(t3_ixs ∪ [[p] for p in pos10] ∪ [[p] for p in pos01] ∪  [[p] for p in pos11],Int[])
 end
 
-function main(optimizer; filename=nothing)
+function main(optimizer; folder=nothing)
     @info "Running N-Queens with optimizer: $(optimizer)"
     n = 28
     code = generate_3_tensor_network(n)
     time_elapsed = @elapsed optcode = optimize_code(code, uniformsize(code, 2), optimizer)
     @info "Contraction complexity: $(contraction_complexity(optcode, uniformsize(optcode, 2))), time cost: $(time_elapsed)s"
-    filename !== nothing && OMEinsumContractionOrders.writejson(filename, optcode)
+    folder !== nothing && OMEinsumContractionOrders.writejson(joinpath(folder, "nqueens_n=$(n).json"), optcode)
     return contraction_complexity(optcode, uniformsize(optcode, 2))
 end
