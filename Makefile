@@ -28,32 +28,23 @@ update:
 		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.update()"; \
 	done
 
-generate-samples:
+generate-codes:
 	for case in inference quantumcircuit nqueens independentset qec; do \
-		echo "Generating samples for $${case}"; \
-		julia --project=examples/$${case} -e "include(joinpath(\"examples\", \"$${case}\", \"main.jl\")); main(GreedyMethod(); folder=joinpath(\"examples\", \"$${case}\", \"samples\"))"; \
+		echo "Generating codes for $${case}"; \
+		julia --project=examples/$${case} -e "include(joinpath(\"examples\", \"$${case}\", \"main.jl\")); main(GreedyMethod(); folder=joinpath(\"examples\", \"$${case}\", \"codes\"))"; \
 	done
 
-showme-hypernd:  # QEC does not work with KaHyPar
-	for case in inference quantumcircuit nqueens independentset; do \
-		echo "Running $${case}"; \
-		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.develop(path=\".\"); Pkg.instantiate(); include(joinpath(rootdir, \"main.jl\")); using KaHyPar; main(HyperND())"; \
-	done
+run:
+	$(JL) -e "include(\"runner.jl\"); run([GreedyMethod()])"
 
-showme-treesa:  # QEC does not work with KaHyPar
-	for case in inference quantumcircuit nqueens independentset qec; do \
-		echo "Running $${case}"; \
-		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.develop(path=\".\"); Pkg.instantiate(); include(joinpath(rootdir, \"main.jl\")); main(TreeSA())"; \
-	done
+summarize-results:
+	$(JL) -e "include(\"runner.jl\"); summarize_results()"
 
-update-examples:  # QEC does not work with KaHyPar
-	for case in inference quantumcircuit nqueens independentset qec; do \
-		echo "Running $${case}"; \
-		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.update()"; \
-	done
+clean-results:
+	find . -name "examples/*/results/*.json" -type f -print0 | xargs -0 /bin/rm -f
 
 fig:
-	for entry in "docs/src/assets/"*.typ; do \
+	for entry in "examples/qec/src/assets/"*.typ; do \
 		echo compiling $$entry to $${entry%.typ}.pdf; \
 		typst compile $$entry $${entry%.typ}.pdf; \
 		pdf2svg $${entry%.typ}.pdf $${entry%.typ}.svg; \

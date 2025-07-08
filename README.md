@@ -14,7 +14,7 @@ make dev   # develop the master branch of OMEinsumContractionOrders for all exam
 
 To switch back to the released version of `OMEinsumContractionOrders`, run
 ```bash
-make free  # switch back to the released version of OMEinsumContractionOrders for all examples
+make free  # switch back to the released version of OMEinsumContractionOrders
 ```
 
 To update the dependencies of all examples, run
@@ -23,11 +23,31 @@ make update
 ```
 
 #### Generate tensor network instances
-To generate samples for all examples, run
+To generate contraction codes for all examples, run
 ```bash
-make generate-samples
+make generate-codes
 ```
 
 #### Run benchmarks
+To run benchmarks, run
+```bash
+make run
+```
 
-TBW
+To summarize the results, run
+```bash
+make summarize-results
+```
+It will generate a file in the `results` folder of each example, named `summary.json`.
+
+To clean the results, run
+```bash
+make clean-results
+```
+
+#### Visualize results
+To visualize the results, run
+```bash
+make fig
+```
+It will generate a file in the `examples` folder of each example, named `*.svg`.

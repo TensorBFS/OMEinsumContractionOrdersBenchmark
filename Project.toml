@@ -1,2 +1,5 @@
 [deps]
 OMEinsumContractionOrders = "6f22d1fd-8eed-4bb7-9776-e7d684900715"
+
+[compat]
+OMEinsumContractionOrders = "0.9"
