@@ -1,6 +1,6 @@
 A repository for benchmarking the performance of different optimizers in [OMEinsumContractionOrders](https://github.com/TensorBFS/OMEinsumContractionOrders.jl).
 
-## Guide
+## Benchmark pipeline
 
 #### 1. Setup environment
 ```bash
@@ -37,7 +37,7 @@ optimizer="GreedyMethod()" make run
 optimizer="TreeSA()" make run
 optimizer="HyperND()" make run
 ```
-It will read the `*.json` files in the `codes` folder of each example, and run the benchmarks.
+It will read the `*.json` files in the `codes` folder of each example, and run the benchmarks (twice by default, to avoid just-in-time compilation overhead).
 The runner script is defined in the [`runner.jl`](runner.jl) file.
 
 If you want to run a batch of jobs, just run
@@ -46,7 +46,7 @@ for niters in {1..5}; do optimizer="TreeSA(niters=$niters * 10)" make run; done
 for niters in {0..10}; do optimizer="GreedyMethod(α=$niters * 0.1)" make run; done
 ```
 
-To clean the results, run
+To remove the results of all benchmarks, run
 ```bash
 make clean-results
 ```
@@ -63,3 +63,11 @@ To visualize the results, run
 make report
 ```
 It will generate a file named `report.pdf` in the root folder, which contains the report of the benchmarks.
+
+
+## Contribute more examples
+The examples are defined in the [`examples`](examples) folder. To add a new example, you need to:
+1. Add a new folder in the [`examples`](examples) folder, named after the problem.
+2. Setup a independent environment in the new folder, and add the dependencies in the `Project.toml` file.
+3. Add a new `main.jl` file in the new folder, which should contain the following functions:
+   - `main(optimizer; folder=nothing)`: the main function to generate the contraction codes to the target folder. The codes must be stored with `OMEinsumContractionOrders.writejson` (or `OMEinsum.writejson` if the example uses `OMEinsum`).

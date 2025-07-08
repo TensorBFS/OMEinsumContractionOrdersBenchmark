@@ -71,6 +71,7 @@ function summarize_results()
         for file in readdir(folder)
             if endswith(file, ".json")
                 data = JSON.parsefile(joinpath(folder, file))
+                data["problem_name"] = problem_name
                 push!(results, data)
             end
         end

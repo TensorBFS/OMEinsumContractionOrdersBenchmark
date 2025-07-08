@@ -4,25 +4,6 @@
 // Read the merged summary data
 #let all_data = json("summary.json")
 
-// Function to extract problem type from instance path
-#let get_problem_type(instance_path) = {
-  if instance_path.contains("rg3") {
-    "Independent Set (RG3)"
-  } else if instance_path.contains("ksg") {
-    "Independent Set (KSG)"
-  } else if instance_path.contains("inference") {
-    "Inference"
-  } else if instance_path.contains("nqueens") {
-    "N-Queens"
-  } else if instance_path.contains("qec") {
-    "QEC"
-  } else if instance_path.contains("quantumcircuit") {
-    "Quantum Circuit"
-  } else {
-    "Unknown"
-  }
-}
-
 // Function to extract instance name from path
 #let get_instance_name(instance_path) = {
   let parts = instance_path.split("/")
@@ -82,18 +63,18 @@
   )
 }
 
-// Group data by problem type
-#let problem_types = ("Independent Set (RG3)", "Independent Set (KSG)", "Inference", "N-Queens", "QEC", "Quantum Circuit")
+// Group data by problem name from summary file
+#let problem_names = ("independentset", "inference", "nqueens", "qec", "quantumcircuit")
 #let grouped_data = (:)
 
-#for problem_type in problem_types {
-  grouped_data.insert(problem_type, ())
+#for problem_name in problem_names {
+  grouped_data.insert(problem_name, ())
 }
 
 #for entry in all_data {
-  let problem_type = get_problem_type(entry.instance)
-  if problem_type in grouped_data {
-    grouped_data.at(problem_type).push(entry)
+  let problem_name = entry.problem_name
+  if problem_name in grouped_data {
+    grouped_data.at(problem_name).push(entry)
   }
 }
 
@@ -101,14 +82,14 @@
 #v(30pt)
 
 // Create individual plots for each problem type
-#for problem_type in problem_types {
-  if problem_type in grouped_data {
-    let dataset = grouped_data.at(problem_type)
+#for problem_name in problem_names {
+  if problem_name in grouped_data {
+    let dataset = grouped_data.at(problem_name)
     figure(
       canvas(length: 1cm, {
         plot-compare(dataset)
       }),
-      caption: [Scatter plot for *#problem_type* showing contraction space complexity vs computing time for different optimizers.]
+      caption: [Scatter plot for *#problem_name* showing contraction space complexity vs computing time for different optimizers.]
     )
   }
 }
@@ -122,16 +103,16 @@ Summary of benchmark results showing space complexity, computing time, and effic
   columns: 6,
   stroke: 0.5pt,
   [*Problem*], [*Instance*], [*Optimizer*], [*Space Complexity*], [*Computing Time (s)*], [*Efficiency*],
-  ..for problem_type in problem_types {
-    if problem_type in grouped_data {
-      let dataset = grouped_data.at(problem_type)
+  ..for problem_name in problem_names {
+    if problem_name in grouped_data {
+      let dataset = grouped_data.at(problem_name)
       for entry in dataset {
       let sc = entry.contraction_complexity.sc
       let time = entry.time_elapsed
       let efficiency = calc.round(sc / time, digits: 1)
       let instance_name = get_instance_name(entry.instance)
       let optimizer = entry.optimizer
-      (problem_type, instance_name, optimizer, str(sc), str(calc.round(time, digits: 4)), str(efficiency))
+      (problem_name, instance_name, optimizer, str(sc), str(calc.round(time, digits: 4)), str(efficiency))
       }
     }
   }
