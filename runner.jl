@@ -1,8 +1,11 @@
 using OMEinsumContractionOrders, OMEinsumContractionOrders.JSON, KaHyPar
+using OMEinsumContractionOrders: MF, MMD, SafeRules, AMF, LexM, LexBFS, BFS, MCS, RCMMD, RCMGL, MCSM
 
 # pirate the show_json for Base.Order.ForwardOrdering (required by HyperND)!!!!
 JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::Base.Order.ForwardOrdering) = JSON.show_json(io, s, "ForwardOrdering")
-JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::OMEinsumContractionOrders.MF) = JSON.show_json(io, s, "MF")
+for T in [:MF, :MMD, :AMF, :LexM, :LexBFS, :BFS, :MCS, :RCMMD, :RCMGL, :MCSM]
+    @eval JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::$(T)) = JSON.show_json(io, s, string($T))
+end
 
 function run_one(input_file, optimizer; overwrite=false)
     @assert endswith(input_file, ".json") "Input file must be a JSON file, got: $(input_file)"
@@ -20,14 +23,15 @@ function run_one(input_file, optimizer; overwrite=false)
     time_elapsed = @elapsed optcode = optimize_code(code, sizes, optimizer)
     cc = OMEinsumContractionOrders.contraction_complexity(optcode, sizes)
     @info "Contraction complexity: $(cc), time cost: $(time_elapsed)s, saving to: $(filename)"
-    open(filename, "w") do f
-        JSON.write(f, JSON.json(Dict(
+    js = JSON.json(Dict(
             "instance" => input_file,
             "optimizer" => string(typeof(optimizer).name.name),
             "optimizer_config" => optimizer,
             "contraction_complexity" => cc,
             "time_elapsed" => time_elapsed
-        )))
+        ))
+    open(filename, "w") do f
+        JSON.write(f, js)
     end
 end
 

@@ -31,53 +31,52 @@
 }
 
 
-#let plot-compare(dataset) = {
-plot.plot(
-  size: (12, 8),
+#let plot-compare(dataset, x-max: auto, y-min: -3, y-max: 3) = {
+ plot.plot(
+  size: (10, 7),
   x-label: "Log2 Contraction Space Complexity",
   y-label: "Log10 Computing Time (seconds)",
   x-min: 0,
-  y-min: -5,
-  y-max: 3,
-  x-max: 60,
+  y-min: y-min,
+  y-max: y-max,
+  x-max: x-max,
   legend: "inner-north-east",
     {
-      // Group points by optimizer
-      let greedy_points = ()
-      let treesa_points = ()
+      // Automatically group points by optimizer
+      let optimizer_groups = (:)
       
+      // Collect all data points grouped by optimizer
       for entry in dataset {
         let sc = entry.contraction_complexity.sc
         let time = calc.log(entry.time_elapsed, base: 10)
         let optimizer = entry.optimizer
-          
-        if optimizer == "GreedyMethod" {
-          greedy_points.push((sc, time))
-        } else if optimizer == "HyperND" {
-          treesa_points.push((sc, time))
+        
+        if optimizer not in optimizer_groups {
+          optimizer_groups.insert(optimizer, ())
         }
+        optimizer_groups.at(optimizer).push((sc, time))
       }
       
-      // Plot Greedy points
-      if greedy_points.len() > 0 {
-        plot.add(
-          greedy_points,
-          style: (stroke: none, fill: red),
-          mark: "o",
-          mark-size: 0.15,
-          label: "GreedyMethod"
-        )
-      }
+      // Define colors and markers for different optimizers
+      let colors = (red, blue, green, purple, orange, black)
+      let markers = ("o", "x", "square", "triangle", "+")
       
-      // Plot TreeSA points  
-      if treesa_points.len() > 0 {
+      // Plot each optimizer group (sorted by optimizer name)
+      let sorted_optimizers = optimizer_groups.keys().sorted()
+      let i = 0
+      for optimizer in sorted_optimizers {
+        let points = optimizer_groups.at(optimizer)
+        let color = colors.at(calc.rem(i, colors.len()))
+        let marker = markers.at(calc.rem(i, markers.len()))
+        
         plot.add(
-          treesa_points,
-          style: (stroke: none, fill: blue),
-          mark: "x",
+          points,
+          style: (stroke: none, fill: color),
+          mark: marker,
           mark-size: 0.15,
-          label: "HyperND"
+          label: optimizer
         )
+        i += 1
       }
     }
   )
@@ -136,49 +135,3 @@ plot.plot(
   ),
   caption: "Summary of benchmark results showing space complexity, computing time, and efficiency ratio for each instance and optimizer."
 )
-
-#pagebreak()
-
-// = Detailed Analysis
-
-// The individual plots reveal several interesting patterns for each problem type:
-
-// #for problem_type in problem_types {
-//   let dataset = grouped_data.at(problem_type)
-//   if dataset.len() > 0 {
-//     [== #problem_type]
-    
-//     for entry in dataset {
-//       let sc = entry.contraction_complexity.sc
-//       let time = entry.time_elapsed
-//       let efficiency = calc.round(sc / time, digits: 1)
-//       let instance_name = get_instance_name(entry.instance)
-//       let optimizer = entry.optimizer
-      
-//       [- #instance_name (#optimizer): Space complexity = #sc, Computing time = #calc.round(time, digits: 4) s, Efficiency = #efficiency]
-//     }
-    
-//     // Compare optimizers if both are present
-//     let greedy_results = dataset.filter(entry => entry.optimizer == "Greedy")
-//     let treesa_results = dataset.filter(entry => entry.optimizer == "TreeSA")
-    
-//     if greedy_results.len() > 0 and treesa_results.len() > 0 {
-//       let greedy_avg_time = greedy_results.map(entry => entry.time_elapsed).sum() / greedy_results.len()
-//       let treesa_avg_time = treesa_results.map(entry => entry.time_elapsed).sum() / treesa_results.len()
-//       let greedy_avg_sc = greedy_results.map(entry => entry.contraction_complexity.sc).sum() / greedy_results.len()
-//       let treesa_avg_sc = treesa_results.map(entry => entry.contraction_complexity.sc).sum() / treesa_results.len()
-      
-//       [*Optimizer Comparison*: Greedy optimizer achieves average SC of #calc.round(greedy_avg_sc, digits: 1) in #calc.round(greedy_avg_time, digits: 4) s, while TreeSA achieves average SC of #calc.round(treesa_avg_sc, digits: 1) in #calc.round(treesa_avg_time, digits: 4) s.]
-//     }
-//   }
-// }
-
-= Overall Insights
-
-1. *Optimizer Performance*: The visualization shows how different optimizers (Greedy vs TreeSA) perform on the same problem instances, revealing trade-offs between solution quality and computation time.
-
-2. *Problem-Specific Patterns*: Each problem type exhibits unique characteristics, with some favoring one optimizer over another in terms of either time efficiency or solution quality.
-
-3. *Instance Variation*: Multiple instances of the same problem type show how problem structure affects optimizer performance.
-
-4. *Trade-off Analysis*: The dual-optimizer approach reveals the trade-offs between different optimization strategies, helping identify the best approach for specific problem characteristics.
