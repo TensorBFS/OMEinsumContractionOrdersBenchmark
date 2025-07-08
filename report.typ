@@ -108,30 +108,31 @@
       canvas(length: 1cm, {
         plot-compare(dataset)
       }),
-      caption: [Scatter plot for #problem_type showing contraction space complexity vs computing time for different optimizers.]
+      caption: [Scatter plot for *#problem_type* showing contraction space complexity vs computing time for different optimizers.]
     )
   }
 }
 
+#pagebreak()
+
 // Summary statistics table
-#figure(
-  table(
-    columns: 6,
-    stroke: 0.5pt,
-    [*Problem*], [*Instance*], [*Optimizer*], [*Space Complexity*], [*Computing Time (s)*], [*Efficiency*],
-    ..for problem_type in problem_types {
-      if problem_type in grouped_data {
-        let dataset = grouped_data.at(problem_type)
-        for entry in dataset {
-        let sc = entry.contraction_complexity.sc
-        let time = entry.time_elapsed
-        let efficiency = calc.round(sc / time, digits: 1)
-        let instance_name = get_instance_name(entry.instance)
-        let optimizer = entry.optimizer
-        (problem_type, instance_name, optimizer, str(sc), str(calc.round(time, digits: 4)), str(efficiency))
-        }
+Summary of benchmark results showing space complexity, computing time, and efficiency ratio for each instance and optimizer.
+#v(10pt)
+#table(
+  columns: 6,
+  stroke: 0.5pt,
+  [*Problem*], [*Instance*], [*Optimizer*], [*Space Complexity*], [*Computing Time (s)*], [*Efficiency*],
+  ..for problem_type in problem_types {
+    if problem_type in grouped_data {
+      let dataset = grouped_data.at(problem_type)
+      for entry in dataset {
+      let sc = entry.contraction_complexity.sc
+      let time = entry.time_elapsed
+      let efficiency = calc.round(sc / time, digits: 1)
+      let instance_name = get_instance_name(entry.instance)
+      let optimizer = entry.optimizer
+      (problem_type, instance_name, optimizer, str(sc), str(calc.round(time, digits: 4)), str(efficiency))
       }
     }
-  ),
-  caption: "Summary of benchmark results showing space complexity, computing time, and efficiency ratio for each instance and optimizer."
+  }
 )

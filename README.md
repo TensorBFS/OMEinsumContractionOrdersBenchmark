@@ -40,20 +40,26 @@ optimizer="HyperND()" make run
 It will read the `*.json` files in the `codes` folder of each example, and run the benchmarks.
 The runner script is defined in the [`runner.jl`](runner.jl) file.
 
-To summarize the results (a necessary step for visualization), run
+If you want to run a batch of jobs, just run
 ```bash
-make summary
+for niters in {1..5}; do optimizer="TreeSA(niters=$niters * 10)" make run; done
+for niters in {0..10}; do optimizer="GreedyMethod(α=$niters * 0.1)" make run; done
 ```
-It will generate a file in the `results` folder of each example, named `summary.json`.
 
 To clean the results, run
 ```bash
 make clean-results
 ```
 
-#### 4. Visualize results
+#### 4. Generate report
+To summarize the results (a necessary step for visualization), run
+```bash
+make summary
+```
+It will generate a file named `summary.json` in the root folder, which contains the results of all benchmarks.
+
 To visualize the results, run
 ```bash
-make fig
+make report
 ```
-It will generate a file in the `examples` folder of each example, named `*.svg`.
+It will generate a file named `report.pdf` in the root folder, which contains the report of the benchmarks.

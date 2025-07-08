@@ -44,11 +44,7 @@ summary:
 clean-results:
 	find examples -name "*.json" -path "*/results/*" -type f -print0 | xargs -0 /bin/rm -f
 
-fig:
-	for entry in "examples/qec/src/assets/"*.typ; do \
-		echo compiling $$entry to $${entry%.typ}.pdf; \
-		typst compile $$entry $${entry%.typ}.pdf; \
-		pdf2svg $${entry%.typ}.pdf $${entry%.typ}.svg; \
-	done
+report:
+	typst compile report.typ report.pdf
 
-.PHONY: init dev free update generate-codes run summarize-results clean-results fig
+.PHONY: init dev free update generate-codes run summarize-results clean-results report
