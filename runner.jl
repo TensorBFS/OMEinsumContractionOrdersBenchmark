@@ -1,4 +1,8 @@
-using OMEinsumContractionOrders, OMEinsumContractionOrders.JSON
+using OMEinsumContractionOrders, OMEinsumContractionOrders.JSON, KaHyPar
+
+# pirate the show_json for Base.Order.ForwardOrdering (required by HyperND)!!!!
+JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::Base.Order.ForwardOrdering) = JSON.show_json(io, s, "ForwardOrdering")
+JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::OMEinsumContractionOrders.MF) = JSON.show_json(io, s, "MF")
 
 function run_one(input_file, optimizer; overwrite=false)
     @assert endswith(input_file, ".json") "Input file must be a JSON file, got: $(input_file)"
@@ -18,7 +22,9 @@ function run_one(input_file, optimizer; overwrite=false)
     @info "Contraction complexity: $(cc), time cost: $(time_elapsed)s, saving to: $(filename)"
     open(filename, "w") do f
         JSON.write(f, JSON.json(Dict(
-            "optimizer" => optimizer,
+            "instance" => input_file,
+            "optimizer" => string(typeof(optimizer).name.name),
+            "optimizer_config" => optimizer,
             "contraction_complexity" => cc,
             "time_elapsed" => time_elapsed
         )))
@@ -54,19 +60,19 @@ function run(optimizer_list; overwrite=false)
 end
 
 function summarize_results()
+    results = []
     for problem_name in unique(first.(problem_list))
         @info "Summarizing: $(problem_name)"
         folder = joinpath(@__DIR__, "examples", problem_name, "results")
-        results = []
         for file in readdir(folder)
             if endswith(file, ".json")
                 data = JSON.parsefile(joinpath(folder, file))
                 push!(results, data)
             end
         end
-        @info "Writing summary to: $(joinpath(folder, "summary.json"))"
-        open(joinpath(folder, "summary.json"), "w") do f
-            JSON.write(f, JSON.json(results))
-        end
+    end
+    @info "Writing summary to: $(joinpath(@__DIR__, "summary.json"))"
+    open(joinpath(@__DIR__, "summary.json"), "w") do f
+        JSON.write(f, JSON.json(results))
     end
 end

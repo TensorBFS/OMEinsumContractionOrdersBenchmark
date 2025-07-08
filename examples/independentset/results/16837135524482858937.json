@@ -1,1 +1,1 @@
-{"optimizer":{"α":0.0,"temperature":0.0,"nrepeat":1},"time_elapsed":0.43734661,"contraction_complexity":{"tc":63.4663197021858,"sc":44.0,"rwc":46.106550217033046}}
+{"optimizer_config":{"α":0.0,"temperature":0.0,"nrepeat":1},"optimizer":"GreedyMethod","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/independentset/codes/ksg.json","time_elapsed":0.419301049,"contraction_complexity":{"tc":63.4663197021858,"sc":44.0,"rwc":46.106550217033046}}

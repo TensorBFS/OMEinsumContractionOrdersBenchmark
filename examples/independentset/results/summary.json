@@ -1,1 +1,0 @@
-[{"optimizer":{"α":0.0,"nrepeat":1,"temperature":0.0},"time_elapsed":0.43734661,"contraction_complexity":{"rwc":46.106550217033046,"tc":63.4663197021858,"sc":44.0}},{"optimizer":{"α":0.0,"nrepeat":1,"temperature":0.0},"time_elapsed":0.011181167,"contraction_complexity":{"rwc":35.131440354842304,"tc":42.00427212097975,"sc":34.0}}]

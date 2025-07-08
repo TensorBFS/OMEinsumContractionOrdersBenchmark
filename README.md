@@ -2,7 +2,7 @@ A repository for benchmarking the performance of different optimizers in [OMEins
 
 ## Guide
 
-#### Setup environment
+#### 1. Setup environment
 ```bash
 make init  # install all dependencies for all examples
 ```
@@ -22,21 +22,27 @@ To update the dependencies of all examples, run
 make update
 ```
 
-#### Generate tensor network instances
-To generate contraction codes for all examples, run
+#### 2. Generate tensor network instances
+Examples are defined in the [`examples`](examples) folder. To generate contraction codes for all examples, run
 ```bash
 make generate-codes
 ```
+It will generate a file in the `codes` folder of each example, named `*.json`.
+These instances are defined in the `main.jl` file of each example.
 
-#### Run benchmarks
+#### 3. Run benchmarks
 To run benchmarks, run
 ```bash
-make run
+optimizer="GreedyMethod()" make run
+optimizer="TreeSA()" make run
+optimizer="HyperND()" make run
 ```
+It will read the `*.json` files in the `codes` folder of each example, and run the benchmarks.
+The runner script is defined in the [`runner.jl`](runner.jl) file.
 
-To summarize the results, run
+To summarize the results (a necessary step for visualization), run
 ```bash
-make summarize-results
+make summary
 ```
 It will generate a file in the `results` folder of each example, named `summary.json`.
 
@@ -45,7 +51,7 @@ To clean the results, run
 make clean-results
 ```
 
-#### Visualize results
+#### 4. Visualize results
 To visualize the results, run
 ```bash
 make fig

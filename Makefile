@@ -8,10 +8,10 @@ init:
 	done
 
 dev:
-	$(JL) -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
+	$(JL) -e 'using Pkg; Pkg.develop("OMEinsumContractionOrders"); Pkg.instantiate()'
 	for case in inference quantumcircuit nqueens independentset qec; do \
 		echo "Developing $${case}"; \
-		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.develop(path=\".\"); Pkg.instantiate()"; \
+		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.develop(\"OMEinsumContractionOrders\"); Pkg.instantiate()"; \
 	done
 
 free:
@@ -35,13 +35,14 @@ generate-codes:
 	done
 
 run:
-	$(JL) -e "include(\"runner.jl\"); run([GreedyMethod()])"
+	@echo "Running benchmarks with optimizer: $(optimizer)"
+	$(JL) -e "include(\"runner.jl\"); run([$(optimizer)])"
 
-summarize-results:
+summary:
 	$(JL) -e "include(\"runner.jl\"); summarize_results()"
 
 clean-results:
-	find . -name "examples/*/results/*.json" -type f -print0 | xargs -0 /bin/rm -f
+	find examples -name "*.json" -path "*/results/*" -type f -print0 | xargs -0 /bin/rm -f
 
 fig:
 	for entry in "examples/qec/src/assets/"*.typ; do \
@@ -50,8 +51,4 @@ fig:
 		pdf2svg $${entry%.typ}.pdf $${entry%.typ}.svg; \
 	done
 
-clean:
-	rm -rf docs/build
-	find . -name "*.cov" -type f -print0 | xargs -0 /bin/rm -f
-
-.PHONY: init test coverage serve clean update
+.PHONY: init dev free update generate-codes run summarize-results clean-results fig
