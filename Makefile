@@ -31,7 +31,7 @@ update:
 generate-samples:
 	for case in inference quantumcircuit nqueens independentset qec; do \
 		echo "Generating samples for $${case}"; \
-		julia --project=examples/${case} -e "include(joinpath(\"examples\", \"$${case}\", \"main.jl\")); main(GreedyMethod(); folder=joinpath(\"examples\", \"$${case}\", \"samples\"))"; \
+		julia --project=examples/$${case} -e "include(joinpath(\"examples\", \"$${case}\", \"main.jl\")); main(GreedyMethod(); folder=joinpath(\"examples\", \"$${case}\", \"samples\"))"; \
 	done
 
 showme-hypernd:  # QEC does not work with KaHyPar

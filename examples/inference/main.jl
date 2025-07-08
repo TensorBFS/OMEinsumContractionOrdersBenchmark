@@ -8,7 +8,7 @@ function main(optimizer; folder=nothing)
     selected_ids = [3]
     results = []
     for (id, problem) in problems[problem_set_name]
-        if id ∉ selected_ids
+        if id ∈ selected_ids
             @info "Testing: $(problem_set_name)_$id"
             time_elapsed = @elapsed tn = TensorNetworkModel(read_model(problem); optimizer, evidence=read_evidence(problem))
             folder !== nothing && TensorInference.OMEinsum.writejson(joinpath(folder, "$(problem_set_name)_$(id).json"), tn.code)

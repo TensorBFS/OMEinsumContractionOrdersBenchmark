@@ -1,8 +1,8 @@
 using GenericTensorNetworks, GenericTensorNetworks.Graphs, OMEinsumContractionOrders
 
-function main(optimizer)
+function main(optimizer; folder=nothing)
     @info "Running independent set with optimizer: $(optimizer)"
-    return [single_run(optimizer, case) for case in [:rg3, :ksg]]
+    return [single_run(optimizer, case; folder) for case in [:rg3, :ksg]]
 end
 
 function single_run(optimizer, case; folder=nothing)
