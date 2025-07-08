@@ -12,7 +12,7 @@
 }
 
 
-#let plot-compare(dataset, x-max: auto, y-min: -3, y-max: 3) = {
+#let plot-compare(dataset, x-max: auto, y-min: -3, y-max: 3.5) = {
  plot.plot(
   size: (10, 7),
   x-label: "Log2 Contraction Space Complexity",
