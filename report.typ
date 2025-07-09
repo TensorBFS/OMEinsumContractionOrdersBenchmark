@@ -63,35 +63,32 @@
   )
 }
 
-// Group data by problem name from summary file
-#let problem_names = ("independentset", "inference", "nqueens", "qec", "quantumcircuit")
+// Group data by problem name + instance name from summary file
 #let grouped_data = (:)
-
-#for problem_name in problem_names {
-  grouped_data.insert(problem_name, ())
-}
 
 #for entry in all_data {
   let problem_name = entry.problem_name
-  if problem_name in grouped_data {
-    grouped_data.at(problem_name).push(entry)
+  let instance_name = get_instance_name(entry.instance)
+  let combined_key = problem_name + "/" + instance_name
+  if combined_key not in grouped_data {
+    grouped_data.insert(combined_key, ())
   }
+  grouped_data.at(combined_key).push(entry)
 }
 
 #align(center, text(12pt)[= OMEinsum Contraction Orders Benchmark Results])
 #v(30pt)
 
-// Create individual plots for each problem type
-#for problem_name in problem_names {
-  if problem_name in grouped_data {
-    let dataset = grouped_data.at(problem_name)
-    figure(
-      canvas(length: 1cm, {
-        plot-compare(dataset)
-      }),
-      caption: [Scatter plot for *#problem_name* showing contraction space complexity vs computing time for different optimizers.]
-    )
-  }
+// Create individual plots for each problem + instance combination
+#let combined_keys = grouped_data.keys().sorted()
+#for combined_key in combined_keys {
+  let dataset = grouped_data.at(combined_key)
+  figure(
+    canvas(length: 1cm, {
+      plot-compare(dataset)
+    }),
+    caption: [Scatter plot for *#combined_key* showing contraction space complexity vs computing time for different optimizers.]
+  )
 }
 
 #pagebreak()
@@ -103,17 +100,16 @@ Summary of benchmark results showing space complexity, computing time, and effic
   columns: 6,
   stroke: 0.5pt,
   [*Problem*], [*Instance*], [*Optimizer*], [*Space Complexity*], [*Computing Time (s)*], [*Efficiency*],
-  ..for problem_name in problem_names {
-    if problem_name in grouped_data {
-      let dataset = grouped_data.at(problem_name)
-      for entry in dataset {
+  ..for combined_key in combined_keys {
+    let dataset = grouped_data.at(combined_key)
+    for entry in dataset {
       let sc = entry.contraction_complexity.sc
       let time = entry.time_elapsed
       let efficiency = calc.round(sc / time, digits: 1)
+      let problem_name = entry.problem_name
       let instance_name = get_instance_name(entry.instance)
       let optimizer = entry.optimizer
       (problem_name, instance_name, optimizer, str(sc), str(calc.round(time, digits: 4)), str(efficiency))
-      }
     }
   }
 )
