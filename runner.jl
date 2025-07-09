@@ -10,15 +10,16 @@ end
 function run_one(input_file, optimizer; overwrite=false)
     @assert endswith(input_file, ".json") "Input file must be a JSON file, got: $(input_file)"
     @info "Testing: $(input_file) with $(optimizer)"
-    rawcode = OMEinsumContractionOrders.readjson(input_file)
-    code = OMEinsumContractionOrders.EinCode(OMEinsumContractionOrders.getixsv(rawcode), OMEinsumContractionOrders.getiyv(rawcode))
+    _process_labels(ix::Vector) = Vector{Int}(ix)
+    js = JSON.parsefile(input_file)
+    code = OMEinsumContractionOrders.EinCode(_process_labels.(js["einsum"]["ixs"]), _process_labels(js["einsum"]["iy"]))
+    sizes = Dict([(Base.parse(Int, k)=>Int(v)) for (k, v) in js["size"]])
     filename = joinpath(dirname(dirname(input_file)), "results", "$(paramhash((input_file, optimizer))).json")
     if isfile(filename) && !overwrite
         @info "Skipping: $(filename) (already exists)"
         return
     end
     mkpath(dirname(filename))
-    sizes = uniformsize(code, 2)  # TODO: support non-uniform sizes
     optcode = optimize_code(code, sizes, optimizer)  # the first run is to avoid just-in-time compilation overhead
     time_elapsed = @elapsed optcode = optimize_code(code, sizes, optimizer)
     cc = OMEinsumContractionOrders.contraction_complexity(optcode, sizes)

@@ -93,18 +93,15 @@ end
 using Yao
 # Load functions to read qflex qasm files.
 using .YaoQASMReader: yaocircuit_from_qasm
-using OMEinsumContractionOrders
+using OMEinsumContractionOrders, OMEinsumContractionOrders.JSON
 
-function main(optimizer; folder=nothing)
+function main(folder::String)
     # circuit source: https://github.com/brenjohn/Contraction-Order-Bench/tree/main/data/circuits
     cirq_name = "sycamore_53_20_0"
-    @info("Running circuit `$(cirq_name)` with optimizer: $(optimizer)")
-
     # Create the TensorNetworkCircuit object for the circuit
     qasm_file = joinpath(@__DIR__, cirq_name * ".txt")
     c = yaocircuit_from_qasm(qasm_file)
-    time_elapsed = @elapsed net = yao2einsum(c; initial_state=Dict(zip(1:nqubits(c), zeros(Int,nqubits(c)))), final_state=Dict(zip(1:nqubits(c), zeros(Int,nqubits(c)))), optimizer)
-    @info "Contraction complexity: $(contraction_complexity(net)), time cost: $(time_elapsed)s"
-    folder !== nothing && Yao.YaoToEinsum.writejson(joinpath(folder, "$(cirq_name).json"), net.code)
-    return contraction_complexity(net)
+    net = yao2einsum(c; initial_state=Dict(zip(1:nqubits(c), zeros(Int,nqubits(c)))), final_state=Dict(zip(1:nqubits(c), zeros(Int,nqubits(c)))), optimizer=nothing)
+    js = JSON.json(Dict("einsum" => net.code, "size" => uniformsize(net.code, 2)))
+    write(joinpath(folder, "$(cirq_name).json"), js)
 end

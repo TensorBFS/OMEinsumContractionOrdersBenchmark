@@ -1,6 +1,6 @@
-using OMEinsumContractionOrders.CliqueTrees, OMEinsumContractionOrders.Graphs, OMEinsumContractionOrders.AbstractTrees
-using OMEinsumContractionOrders
+using OMEinsumContractionOrders, OMEinsumContractionOrders.CliqueTrees, OMEinsumContractionOrders.Graphs, OMEinsumContractionOrders.AbstractTrees
 using OMEinsumContractionOrders: EinCode
+using OMEinsumContractionOrders.JSON
 
 struct TensorNQ
     labels::Vector{Int}
@@ -68,12 +68,9 @@ function generate_3_tensor_network(t9_lattice::TensorNQLattice)
     return EinCode(t3_ixs ∪ [[p] for p in pos10] ∪ [[p] for p in pos01] ∪  [[p] for p in pos11],Int[])
 end
 
-function main(optimizer; folder=nothing)
-    @info "Running N-Queens with optimizer: $(optimizer)"
+function main(folder::String)
     n = 28
     code = generate_3_tensor_network(n)
-    time_elapsed = @elapsed optcode = optimize_code(code, uniformsize(code, 2), optimizer)
-    @info "Contraction complexity: $(contraction_complexity(optcode, uniformsize(optcode, 2))), time cost: $(time_elapsed)s"
-    folder !== nothing && OMEinsumContractionOrders.writejson(joinpath(folder, "nqueens_n=$(n).json"), optcode)
-    return contraction_complexity(optcode, uniformsize(optcode, 2))
+    js = JSON.json(Dict("einsum" => code, "size" => uniformsize(code, 2)))
+    write(joinpath(folder, "nqueens_n=$(n).json"), js)
 end

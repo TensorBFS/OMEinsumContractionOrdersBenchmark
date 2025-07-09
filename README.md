@@ -71,4 +71,20 @@ The examples are defined in the [`examples`](examples) folder. To add a new exam
 1. Add a new folder in the [`examples`](examples) folder, named after the problem.
 2. Setup a independent environment in the new folder, and add the dependencies in the `Project.toml` file.
 3. Add a new `main.jl` file in the new folder, which should contain the following functions:
-   - `main(optimizer; folder=nothing)`: the main function to generate the contraction codes to the target folder. The codes must be stored with `OMEinsumContractionOrders.writejson` (or `OMEinsum.writejson` if the example uses `OMEinsum`).
+   - `main(folder::String)`: the main function to generate the contraction codes to the target folder. The sample JSON file is as follows:
+    ```json
+    {
+    "einsum": {
+        "ixs": [[1, 2], [2, 3], [3, 4]],
+        "iy": []
+    },
+    "size": {
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2
+    }
+    }
+    ```
+    The `einsum` field is the contraction code with two fields: `ixs` (input labels) and `iy` (output label), and `size` is the size of the tensor indices.
+4. Edit the `runner.jl` file to add the new example.

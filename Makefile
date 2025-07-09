@@ -31,7 +31,7 @@ update:
 generate-codes:
 	for case in inference quantumcircuit nqueens independentset qec; do \
 		echo "Generating codes for $${case}"; \
-		julia --project=examples/$${case} -e "include(joinpath(\"examples\", \"$${case}\", \"main.jl\")); main(GreedyMethod(); folder=joinpath(\"examples\", \"$${case}\", \"codes\"))"; \
+		julia --project=examples/$${case} -e "include(joinpath(\"examples\", \"$${case}\", \"main.jl\")); main(joinpath(\"examples\", \"$${case}\", \"codes\"))"; \
 	done
 
 run:

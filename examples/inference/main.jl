@@ -1,21 +1,17 @@
-using TensorInference, OMEinsumContractionOrders
+using TensorInference, OMEinsumContractionOrders, TensorInference.OMEinsum
+using OMEinsumContractionOrders.JSON
 
-function main(optimizer; folder=nothing)
-    @info "Running inference with optimizer: $(optimizer)"
+function main(folder::String)
     problems = dataset_from_artifact("uai2014")["MAR"]
     problem_set_name = "relational"
-    tamaki = [251, 3, 8, 101, 11]
+    # tamaki = [251, 3, 8, 101, 11]  # the treewidth given by Tamaki's algorithm
     selected_ids = [3]
-    results = []
     for (id, problem) in problems[problem_set_name]
         if id ∈ selected_ids
-            @info "Testing: $(problem_set_name)_$id"
-            time_elapsed = @elapsed tn = TensorNetworkModel(read_model(problem); optimizer, evidence=read_evidence(problem))
-            folder !== nothing && TensorInference.OMEinsum.writejson(joinpath(folder, "$(problem_set_name)_$(id).json"), tn.code)
-            # does not optimize over open vertices
-            @info "Contraction complexity: $(contraction_complexity(tn)) (tamaki tw = $(tamaki[id])), time cost: $(time_elapsed)s"
-            push!(results, (id, contraction_complexity(tn), tamaki[id], time_elapsed))
+            @info "Generating code for: $(problem_set_name)_$id"
+            tn = TensorNetworkModel(read_model(problem); optimizer=GreedyMethod(), evidence=read_evidence(problem))
+            js = JSON.json(Dict("einsum" => OMEinsum.flatten(tn.code), "size" => uniformsize(tn.code, 2)))
+            write(joinpath(folder, "$(problem_set_name)_$(id).json"), js)
         end
     end
-    return results
 end
