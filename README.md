@@ -59,12 +59,12 @@ make summary
 ```
 It will generate a file named `summary.json` in the root folder, which contains the results of all benchmarks.
 
-To visualize the results, run
+To visualize the results, [typst](https://typst.app/) >= 0.13 is required. After installing typst just run
 ```bash
 make report
 ```
 It will generate a file named `report.pdf` in the root folder, which contains the report of the benchmarks.
-
+Alternatively, you can use VSCode + `Tinymist typst` extension to directly preview it.
 
 ## Contribute more examples
 The examples are defined in the [`examples`](examples) folder. To add a new example, you need to:
