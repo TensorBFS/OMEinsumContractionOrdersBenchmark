@@ -37,6 +37,8 @@ optimizer="GreedyMethod()" make run
 optimizer="TreeSA()" make run
 optimizer="HyperND()" make run
 optimizer="Treewidth(MF())" make run
+optimizer="Treewidth(MMD())" make run
+optimizer="Treewidth(AMF())" make run
 ```
 It will read the `*.json` files in the `codes` folder of each example, and run the benchmarks (twice by default, to avoid just-in-time compilation overhead).
 The runner script is defined in the [`runner.jl`](runner.jl) file.
