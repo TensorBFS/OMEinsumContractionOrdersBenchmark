@@ -1,4 +1,4 @@
-A repository for benchmarking the performance of different optimizers in [OMEinsumContractionOrders](https://github.com/TensorBFS/OMEinsumContractionOrders.jl).
+This repository is for benchmarking the performance of different tensor network contraction order optimizers in [OMEinsumContractionOrders](https://github.com/TensorBFS/OMEinsumContractionOrders.jl). Single thread benchmark results on CPU: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz are available in folders `examples/*/results`. Results can be visualized with `report.typ` (check the details below).
 
 ## Benchmark pipeline
 
