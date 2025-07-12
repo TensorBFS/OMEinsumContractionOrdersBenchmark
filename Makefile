@@ -36,7 +36,7 @@ generate-codes:
 
 run:
 	@echo "Running benchmarks with optimizer: $(optimizer)"
-	$(JL) -e "include(\"runner.jl\"); run([$(optimizer); overwrite=${{overwrite:-false}}])"
+	$(JL) -e "include(\"runner.jl\"); run([$(optimizer)]; overwrite=$${overwrite:-false})"
 
 summary:
 	$(JL) -e "include(\"runner.jl\"); summarize_results()"
