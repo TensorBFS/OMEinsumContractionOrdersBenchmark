@@ -18,7 +18,7 @@
   size: (10, 7),
   x-label: "Log2 Contraction Cost",
   y-label: "Log10 Computing Time (seconds)",
-  x-min: 0,
+  x-min: auto,
   y-min: y-min,
   y-max: y-max,
   x-max: x-max,
@@ -35,11 +35,12 @@
         let cost = a * sc + b * tc + c * rwc
         let time = calc.log(entry.time_elapsed, base: 10)
         let optimizer = entry.optimizer
+        let optimizer_config = entry.optimizer_config
         
         if optimizer not in optimizer_groups {
           optimizer_groups.insert(optimizer, ())
         }
-        optimizer_groups.at(optimizer).push((sc, time))
+        optimizer_groups.at(optimizer).push((cost, time))
       }
       
       // Define colors and markers for different optimizers
@@ -89,8 +90,8 @@ Note: the `Treewidth` optimizer is greedy, only a subset of backends (`MF`, `MMD
 #let combined_keys = grouped_data.keys().sorted()
 #for combined_key in combined_keys {
   let dataset = grouped_data.at(combined_key)
-  let a = 1
-  let b = 0
+  let a = 0
+  let b = 1
   let c = 0
   figure(
     canvas(length: 1cm, {
@@ -100,27 +101,27 @@ Note: the `Treewidth` optimizer is greedy, only a subset of backends (`MF`, `MMD
   )
 }
 
-#pagebreak()
+// #pagebreak()
 
-// Summary statistics table
-Summary of benchmark results showing space complexity, computing time, and efficiency ratio for each instance and optimizer.
-#v(10pt)
-#table(
-  columns: 6,
-  stroke: 0.5pt,
-  [*Problem*], [*Instance*], [*Optimizer*], [*Space Complexity*], [*Computing Time (s)*], [*Efficiency*],
-  ..for combined_key in combined_keys {
-    let dataset = grouped_data.at(combined_key)
-    for entry in dataset {
-      let sc = entry.contraction_complexity.sc
-      let tc = entry.contraction_complexity.tc
-      let rwc = entry.contraction_complexity.rwc
-      let time = entry.time_elapsed
-      let efficiency = calc.round(sc / time, digits: 1)
-      let problem_name = entry.problem_name
-      let instance_name = get_instance_name(entry.instance)
-      let optimizer = entry.optimizer
-      (problem_name, instance_name, optimizer, str(sc), str(calc.round(time, digits: 4)), str(efficiency))
-    }
-  }
-)
+// // Summary statistics table
+// Summary of benchmark results showing space complexity, computing time, and efficiency ratio for each instance and optimizer.
+// #v(10pt)
+// #table(
+//   columns: 6,
+//   stroke: 0.5pt,
+//   [*Problem*], [*Instance*], [*Optimizer*], [*Space Complexity*], [*Computing Time (s)*], [*Efficiency*],
+//   ..for combined_key in combined_keys {
+//     let dataset = grouped_data.at(combined_key)
+//     for entry in dataset {
+//       let sc = entry.contraction_complexity.sc
+//       let tc = entry.contraction_complexity.tc
+//       let rwc = entry.contraction_complexity.rwc
+//       let time = entry.time_elapsed
+//       let efficiency = calc.round(sc / time, digits: 1)
+//       let problem_name = entry.problem_name
+//       let instance_name = get_instance_name(entry.instance)
+//       let optimizer = entry.optimizer
+//       (problem_name, instance_name, optimizer, str(sc), str(calc.round(time, digits: 4)), str(efficiency))
+//     }
+//   }
+// )

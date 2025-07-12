@@ -30,6 +30,12 @@ make generate-codes
 It will generate a file in the `codes` folder of each example, named `*.json`.
 These instances are defined in the `main.jl` file of each example.
 
+There is also a script to generate the contraction codes for the [einsumorg](https://github.com/einsumorg/einsumorg) package, run
+```bash
+make generate-einsumorg-codes
+```
+It will generate a file in the `codes` folder of the `einsumorg` example, named `*.json`. It requires a working python environment.
+
 #### 3. Run benchmarks
 To run benchmarks, run
 ```bash

@@ -34,9 +34,13 @@ generate-codes:
 		julia --project=examples/$${case} -e "include(joinpath(\"examples\", \"$${case}\", \"main.jl\")); main(joinpath(\"examples\", \"$${case}\", \"codes\"))"; \
 	done
 
+generate-einsumorg-codes:
+	mkdir -p examples/einsumorg/codes
+	python3 examples/einsumorg/main.py
+
 run:
 	@echo "Running benchmarks with optimizer: $(optimizer)"
-	$(JL) -e "include(\"runner.jl\"); run([$(optimizer); overwrite=${{overwrite:-false}}])"
+	$(JL) -e "include(\"runner.jl\"); run([$(optimizer)], overwrite=$${overwrite:-false})"
 
 summary:
 	$(JL) -e "include(\"runner.jl\"); summarize_results()"
@@ -47,4 +51,4 @@ clean-results:
 report:
 	typst compile report.typ report.pdf
 
-.PHONY: init dev free update generate-codes run summarize-results clean-results report
+.PHONY: init dev free update generate-codes generate-einsumorg-codes run summarize-results clean-results report
