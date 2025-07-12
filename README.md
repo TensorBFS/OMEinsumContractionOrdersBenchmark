@@ -34,7 +34,9 @@ There is also a script to generate the contraction codes for the [einsumorg](htt
 ```bash
 make generate-einsumorg-codes
 ```
-It will generate a file in the `codes` folder of the `einsumorg` example, named `*.json`. It requires a working python environment.
+It will generate a file in the `codes` folder of the `einsumorg` example, named `*.json`. It requires:
+1. Having a working python interpreter in your terminal.
+2. Downloading the `instances` dataset from [here](https://zenodo.org/records/11477304) and unpack it in the `examples/einsumorg/instances` folder.
 
 #### 3. Run benchmarks
 To run benchmarks, run
