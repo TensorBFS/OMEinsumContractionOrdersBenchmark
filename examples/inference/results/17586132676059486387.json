@@ -1,0 +1,1 @@
+{"optimizer_config":{"alg":"AMF","greedy_config":{"α":0.0,"temperature":0.0,"nrepeat":1}},"optimizer":"Treewidth","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/inference/codes/DBN_13.json","time_elapsed":0.13351623,"contraction_complexity":{"tc":41.710257931021744,"sc":40.0,"rwc":41.34730480150287}}

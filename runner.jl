@@ -1,5 +1,6 @@
-using OMEinsumContractionOrders, OMEinsumContractionOrders.JSON, KaHyPar
-using OMEinsumContractionOrders: MF, MMD, SafeRules, AMF, LexM, LexBFS, BFS, MCS, RCMMD, RCMGL, MCSM
+using OMEinsumContractionOrders, OMEinsumContractionOrders.JSON, KaHyPar, Metis
+using OMEinsumContractionOrders: MF, MMD, SafeRules, AMF, LexM, LexBFS, BFS, MCS, RCMMD, RCMGL, MCSM, METISND, KaHyParND
+import TOML
 
 # pirate the show_json for Base.Order.ForwardOrdering (required by HyperND)!!!!
 JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::Base.Order.ForwardOrdering) = JSON.show_json(io, s, "ForwardOrdering")
@@ -9,7 +10,7 @@ end
 
 function run_one(input_file, optimizer; overwrite=false)
     @assert endswith(input_file, ".json") "Input file must be a JSON file, got: $(input_file)"
-    @info "Testing: $(input_file) with $(optimizer)"
+    @info "Running: $(input_file) with $(optimizer)"
     _process_labels(ix::Vector) = Vector{Int}(ix)
     js = JSON.parsefile(input_file)
     code = OMEinsumContractionOrders.EinCode(_process_labels.(js["einsum"]["ixs"]), _process_labels(js["einsum"]["iy"]))
@@ -47,16 +48,31 @@ function paramhash(obj)
     end
 end
 
-const problem_list = [
-    ("independentset", "ksg.json"),
-    ("independentset", "rg3.json"),
-    ("inference", "relational_3.json"),
-    ("nqueens", "nqueens_n=28.json"),
-    ("qec", "surfacecode_d=21.json"),
-    ("quantumcircuit", "sycamore_53_20_0.json"),
-]
+# Load problem list from config.toml
+function load_problem_list()
+    config_path = joinpath(@__DIR__, "config.toml")
+    if !isfile(config_path)
+        error("Config file not found: $config_path")
+    end
+    
+    config = TOML.parsefile(config_path)
+    if !haskey(config, "instances") || !haskey(config["instances"], "files")
+        error("Invalid config format. Expected [instances] section with 'files' array")
+    end
+    
+    problem_list = []
+    for file_entry in config["instances"]["files"]
+        if length(file_entry) != 2
+            error("Invalid file entry format: $file_entry. Expected [problem_name, instance_name]")
+        end
+        push!(problem_list, (file_entry[1], file_entry[2]))
+    end
+    
+    return problem_list
+end
 
 function run(optimizer_list; overwrite=false)
+    problem_list = load_problem_list()
     for (problem_name, instance_name) in problem_list
         for optimizer in optimizer_list
             run_one(joinpath(@__DIR__, "examples", problem_name, "codes", instance_name), optimizer; overwrite)
@@ -65,15 +81,20 @@ function run(optimizer_list; overwrite=false)
 end
 
 function summarize_results()
+    problem_list = load_problem_list()
     results = []
-    for problem_name in unique(first.(problem_list))
+    problems = unique(first.(problem_list))
+    file_list = [joinpath(@__DIR__, "examples", problem_name, "codes", instance_name) for (problem_name, instance_name) in problem_list]
+    for problem_name in problems
         @info "Summarizing: $(problem_name)"
         folder = joinpath(@__DIR__, "examples", problem_name, "results")
         for file in readdir(folder)
             if endswith(file, ".json")
                 data = JSON.parsefile(joinpath(folder, file))
                 data["problem_name"] = problem_name
-                push!(results, data)
+                if data["instance"] in file_list
+                    push!(results, data)
+                end
             end
         end
     end

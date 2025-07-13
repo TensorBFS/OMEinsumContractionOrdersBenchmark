@@ -1,0 +1,10 @@
+[instances]
+files = [
+    ["independentset", "ksg.json"],
+    ["independentset", "rg3.json"],
+    ["inference", "DBN_13.json"],
+    ["nqueens", "nqueens_n=28.json"],
+    ["qec", "surfacecode_d=21.json"],
+    ["quantumcircuit", "sycamore_53_20_0.json"],
+    ["einsumorg", "qc_qft_27.json"]
+]

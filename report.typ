@@ -90,8 +90,8 @@ Note: the `Treewidth` optimizer is greedy, only a subset of backends (`MF`, `MMD
 #let combined_keys = grouped_data.keys().sorted()
 #for combined_key in combined_keys {
   let dataset = grouped_data.at(combined_key)
-  let a = 0
-  let b = 1
+  let a = 1
+  let b = 0
   let c = 0
   figure(
     canvas(length: 1cm, {

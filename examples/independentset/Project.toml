@@ -1,7 +1,9 @@
 [deps]
 GenericTensorNetworks = "3521c873-ad32-4bb4-b63d-f4f178f42b49"
 OMEinsumContractionOrders = "6f22d1fd-8eed-4bb7-9776-e7d684900715"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
 GenericTensorNetworks = "4.0"
 OMEinsumContractionOrders = "0.9"
+Random = "1"

@@ -41,23 +41,23 @@ It will generate a file in the `codes` folder of the `einsumorg` example, named 
 #### 3. Run benchmarks
 To run benchmarks, run
 ```bash
-optimizer="GreedyMethod()" make run
-optimizer="TreeSA()" make run
+optimizer="Treewidth(alg=MF())" make run
+optimizer="Treewidth(alg=MMD())" make run
+optimizer="Treewidth(alg=AMF())" make run
 optimizer="HyperND()" make run
-optimizer="Treewidth(MF())" make run
-optimizer="Treewidth(MMD())" make run
-optimizer="Treewidth(AMF())" make run
+optimizer="HyperND(; dis=METISND(), width=50, imbalances=100:10:800)" make run
+optimizer="HyperND(; dis=KaHyParND(), width=50, imbalances=100:10:800)" make run
 ```
 It will read the `*.json` files in the `codes` folder of each example, and run the benchmarks (twice by default, to avoid just-in-time compilation overhead).
 The runner script is defined in the [`runner.jl`](runner.jl) file.
 
 If you want to run a batch of jobs, just run
 ```bash
-for niters in {1..5}; do optimizer="TreeSA(niters=$niters * 10)" make run; done
+for niters in 1 2 4 6 8 10 20 30 40 50; do optimizer="TreeSA(niters=$niters)" make run; done
 for niters in {0..10}; do optimizer="GreedyMethod(α=$niters * 0.1)" make run; done
 ```
 
-To remove the results of all benchmarks, run
+If you want to overwrite the existing results, run with argument `overwrite=true`. To remove existing results of all benchmarks, run
 ```bash
 make clean-results
 ```
@@ -97,4 +97,4 @@ The examples are defined in the [`examples`](examples) folder. To add a new exam
     }
     ```
     The `einsum` field is the contraction code with two fields: `ixs` (input labels) and `iy` (output label), and `size` is the size of the tensor indices.
-4. Edit the `runner.jl` file to add the new example.
+4. Edit the `config.toml` file to add the new example in the `instances` section.

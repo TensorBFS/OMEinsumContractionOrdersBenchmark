@@ -1,5 +1,6 @@
 using GenericTensorNetworks, GenericTensorNetworks.Graphs, OMEinsumContractionOrders
 using OMEinsumContractionOrders.JSON
+using Random
 
 function main(folder::String)
     @info "Random 3-regular graph of size 200"
@@ -12,6 +13,7 @@ function main(folder::String)
 end
 
 function single_run(graph; filename=nothing)
+    Random.seed!(42)
     net = GenericTensorNetwork(IndependentSet(graph); optimizer=nothing)
     js = JSON.json(Dict("einsum" => net.code, "size" => uniformsize(net.code, 2)))
     filename !== nothing && write(filename, js)

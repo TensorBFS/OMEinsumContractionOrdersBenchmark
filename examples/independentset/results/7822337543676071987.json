@@ -1,1 +1,0 @@
-{"optimizer_config":{"α":0.6000000000000001,"temperature":0.0,"nrepeat":1},"optimizer":"GreedyMethod","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/independentset/codes/ksg.json","time_elapsed":0.42505597,"contraction_complexity":{"tc":52.55581141621723,"sc":35.0,"rwc":38.58706519449065}}
