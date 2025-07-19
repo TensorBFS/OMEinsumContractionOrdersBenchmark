@@ -1,1 +1,0 @@
-{"optimizer_config":{"α":0.4,"temperature":0.0,"nrepeat":1},"optimizer":"GreedyMethod","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/nqueens/codes/nqueens_n=28.json","time_elapsed":0.402970052,"contraction_complexity":{"tc":421.1705510353167,"sc":341.0,"rwc":342.0000017198255}}

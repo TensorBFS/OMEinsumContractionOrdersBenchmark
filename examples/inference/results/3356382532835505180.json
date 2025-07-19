@@ -1,1 +1,0 @@
-{"optimizer_config":{"α":0.0,"temperature":0.0,"nrepeat":1},"optimizer":"GreedyMethod","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/inference/codes/DBN_13.json","time_elapsed":0.121774024,"contraction_complexity":{"tc":44.59501494531285,"sc":42.0,"rwc":44.02994961219163}}

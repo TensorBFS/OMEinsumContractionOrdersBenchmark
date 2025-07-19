@@ -81,7 +81,7 @@
   grouped_data.at(combined_key).push(entry)
 }
 
-#align(center, text(12pt)[= OMEinsum Contraction Orders Benchmark Results])
+#align(center, text(12pt)[= OMEinsumContractionOrders (v1.0.0) Benchmark Results])
 #v(30pt)
 
 Note: the `Treewidth` optimizer is greedy, only a subset of backends (`MF`, `MMD`, `AMF`) are tested (check #link("https://github.com/TensorBFS/OMEinsumContractionOrdersBenchmark/issues/2")[Issue #2]).

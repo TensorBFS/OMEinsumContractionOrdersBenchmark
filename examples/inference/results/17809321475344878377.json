@@ -1,1 +1,0 @@
-{"optimizer_config":{"α":0.0,"temperature":0.0,"nrepeat":1},"optimizer":"GreedyMethod","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/inference/codes/relational_3.json","time_elapsed":0.112013279,"contraction_complexity":{"tc":17.110187611857487,"sc":8.0,"rwc":17.469999458009173}}

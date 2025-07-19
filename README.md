@@ -44,6 +44,8 @@ To run benchmarks, run
 optimizer="Treewidth(alg=MF())" make run
 optimizer="Treewidth(alg=MMD())" make run
 optimizer="Treewidth(alg=AMF())" make run
+optimizer="KaHyParBipartite(; sc_target=25)" make run
+optimizer="KaHyParBipartite(; sc_target=25, imbalances=0.0:0.1:0.8)" make run
 optimizer="HyperND()" make run
 optimizer="HyperND(; dis=METISND(), width=50, imbalances=100:10:800)" make run
 optimizer="HyperND(; dis=KaHyParND(), width=50, imbalances=100:10:800)" make run
