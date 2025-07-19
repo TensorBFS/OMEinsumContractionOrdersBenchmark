@@ -1,4 +1,16 @@
-This repository is for benchmarking the performance of different tensor network contraction order optimizers in [OMEinsumContractionOrders](https://github.com/TensorBFS/OMEinsumContractionOrders.jl). Single thread benchmark results on CPU: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz are available in folders `examples/*/results`. Results can be visualized with `report.typ` (check the details below).
+# OMEinsumContractionOrders Benchmark
+This repository is for benchmarking the performance of different tensor network contraction order optimizers in [OMEinsumContractionOrders](https://github.com/TensorBFS/OMEinsumContractionOrders.jl).
+
+## Results
+
+The following figure shows the results of the contraction order optimizers on the `examples/quantumcircuit/codes/sycamore_53_20_0.json` instance.
+![Sycamore 53 20 0](figures/sycamore_53_20_0.svg)
+
+- Version: `OMEinsumContractionOrders@v1.0.0`
+- Platform: Ubuntu 24.04 LTS
+- Device: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz 
+
+Check the full report: [report.pdf](report.pdf), benchmark results are available in the `examples/*/results` folder.
 
 ## Benchmark pipeline
 

@@ -51,4 +51,7 @@ clean-results:
 report:
 	typst compile report.typ report.pdf
 
-.PHONY: init dev free update generate-codes generate-einsumorg-codes run summarize-results clean-results report
+figures:
+	typst compile --root . figures/sycamore_53_20_0.typ figures/sycamore_53_20_0.svg
+
+.PHONY: init dev free update generate-codes generate-einsumorg-codes run summarize-results clean-results report figures
