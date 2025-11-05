@@ -63,8 +63,9 @@ Methods with more hyperparameters benefit from intelligent optimization (optuna)
 
 These control the hyper-optimization process (not the methods themselves):
 
-#### `max_repeats` (default: 10)
+#### `max_repeats` (default: 1)
 Number of trials to run. Each trial samples different hyperparameters.
+- **1**: Single trial, fastest
 - **10-20**: Quick scans, good for testing
 - **30-50**: Balanced quality
 - **100+**: High-quality, thorough exploration
@@ -108,13 +109,15 @@ These override the automatic hyperparameter search for those specific parameters
 ### Basic Usage
 
 ```bash
-# Run with default settings (10 trials)
-method=greedy make run-cotengra
-method=kahypar make run-cotengra
-method=labels make run-cotengra
+# Run with default settings (1 trial)
+method=greedy params={} make run-cotengra
+method=kahypar params={} make run-cotengra
+method=labels params={} make run-cotengra
 
-# With custom number of trials
-method=greedy ARGS="--max-repeats 50" make run-cotengra
+# With custom parameters (Python dict syntax)
+method=greedy params="{'max_repeats': 10}" make run-cotengra
+method=greedy params="{'random_strength': 0.1, 'temperature': 0.5}" make run-cotengra
+method=kahypar params="{'parts': 8, 'imbalance': 0.1}" make run-cotengra
 ```
 
 ### Scanning Hyperparameters
@@ -122,28 +125,28 @@ method=greedy ARGS="--max-repeats 50" make run-cotengra
 ```bash
 # Greedy method hyperparameters
 for rs in 0.001 0.01 0.1 0.5 1.0; do 
-    method=greedy ARGS="--random-strength $rs" make run-cotengra
+    method=greedy params="{'random_strength': $rs}" make run-cotengra
 done
 
 for temp in 0.001 0.01 0.1 0.5 1.0; do 
-    method=greedy ARGS="--temperature $temp" make run-cotengra
+    method=greedy params="{'temperature': $temp}" make run-cotengra
 done
 
-for n in 10 20 50 100; do 
-    method=greedy ARGS="--max-repeats $n" make run-cotengra
+for n in 1 5 10 20 50; do 
+    method=greedy params="{'max_repeats': $n}" make run-cotengra
 done
 
 # KaHyPar method hyperparameters
 for p in 2 4 8 16; do 
-    method=kahypar ARGS="--parts $p" make run-cotengra
+    method=kahypar params="{'parts': $p}" make run-cotengra
 done
 
 for imb in 0.01 0.1 0.5 1.0; do 
-    method=kahypar ARGS="--imbalance $imb" make run-cotengra
+    method=kahypar params="{'imbalance': $imb}" make run-cotengra
 done
 
 # Multiple parameters at once
-method=greedy ARGS="--max-repeats 50 --temperature 0.5 --random-strength 0.1" make run-cotengra
+method=greedy params="{'max_repeats': 50, 'temperature': 0.5, 'random_strength': 0.1}" make run-cotengra
 ```
 
 ### Direct Python Script Usage
@@ -155,14 +158,14 @@ cd cotengra
 
 # Basic usage
 uv run benchmark.py greedy
-uv run benchmark.py kahypar --max-repeats 50
+uv run benchmark.py kahypar --max-repeats 10
 
 # With hyperparameters
 uv run benchmark.py greedy --random-strength 0.1 --temperature 0.5
 uv run benchmark.py kahypar --parts 8 --imbalance 0.1
 
 # Overwrite existing results
-uv run benchmark.py greedy --max-repeats 100 --overwrite
+uv run benchmark.py greedy --max-repeats 50 --overwrite
 
 # List all available methods
 uv run benchmark.py --list-methods

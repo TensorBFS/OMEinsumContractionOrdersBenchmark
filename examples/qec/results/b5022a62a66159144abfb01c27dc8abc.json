@@ -1,0 +1,1 @@
+{"instance": "/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/qec/codes/surfacecode_d=21.json", "optimizer": "cotengra_greedy", "optimizer_config": {"name": "cotengra_greedy", "kwargs": {"max_repeats": 1}}, "contraction_complexity": {"tc": 67.0335120562886, "sc": 47.0, "rwc": 48.331900269297655}, "time_elapsed": 2.932108163833618}

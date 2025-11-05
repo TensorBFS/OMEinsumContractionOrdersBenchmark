@@ -1,0 +1,1 @@
+{"instance": "/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/inference/codes/DBN_13.json", "optimizer": "cotengra_greedy", "optimizer_config": {"name": "cotengra_greedy", "kwargs": {"max_repeats": 1}}, "contraction_complexity": {"tc": 44.01974918790039, "sc": 39.0, "rwc": 44.927945025238785}, "time_elapsed": 1.209907054901123}

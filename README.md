@@ -83,13 +83,18 @@ Cotengra is a pure Python implementation managed via `uv`. See [`cotengra/README
 
 **Quick usage:**
 ```bash
-# Basic run (default: 10 trials)
-method=greedy make run-cotengra
-method=kahypar make run-cotengra
+# Basic run (default: 1 trial)
+method=greedy params={} make run-cotengra
+method=kahypar params={} make run-cotengra
+
+# With parameters (dict syntax, like Julia)
+method=greedy params="{'max_repeats': 10}" make run-cotengra
+method=greedy params="{'random_strength': 0.1, 'temperature': 0.5}" make run-cotengra
+method=kahypar params="{'parts': 8, 'imbalance': 0.1}" make run-cotengra
 
 # Scan parameters
-for n in 10 20 50 100; do method=greedy ARGS="--max-repeats $n" make run-cotengra; done
-for p in 2 4 8 16; do method=kahypar ARGS="--parts $p" make run-cotengra; done
+for n in 1 5 10 20 50; do method=greedy params="{'max_repeats': $n}" make run-cotengra; done
+for p in 2 4 8 16; do method=kahypar params="{'parts': $p}" make run-cotengra; done
 ```
 
 **List available methods and hyperparameters:**

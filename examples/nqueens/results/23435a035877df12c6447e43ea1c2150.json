@@ -1,0 +1,1 @@
+{"instance": "/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/nqueens/codes/nqueens_n=28.json", "optimizer": "cotengra_greedy", "optimizer_config": {"name": "cotengra_greedy", "kwargs": {"max_repeats": 1}}, "contraction_complexity": {"tc": 257.4959590285364, "sc": 253.0, "rwc": 257.4577413010299}, "time_elapsed": 55.220473289489746}

@@ -18,13 +18,8 @@ from pathlib import Path
 import argparse
 import sys
 
-try:
-    import cotengra as ctg
-    import numpy as np
-except ImportError as e:
-    print(f"Error: {e}")
-    print("Please install: pip install cotengra numpy")
-    sys.exit(1)
+import cotengra as ctg
+import numpy as np
 
 def load_config():
     """Load problem list from config.toml"""
@@ -66,18 +61,13 @@ def param_hash(obj):
     s = json.dumps(obj, sort_keys=True)
     return hashlib.md5(s.encode()).hexdigest()
 
-def run_one(json_path, method, max_repeats=10, overwrite=False, **hyperparams):
+def run_one(json_path, method, max_repeats=1, overwrite=False, **hyperparams):
     """Run cotengra optimizer on one problem instance"""
     json_path = Path(json_path)
-    print(f"Running: {json_path} with cotengra_{method}")
-    
-    # Load problem
-    inputs, output, size_dict = load_problem(json_path)
     
     # Get valid hyperparameters for this method from cotengra
     hyper_space = ctg.get_hyper_space()
     if method not in hyper_space:
-        print(f"Warning: Unknown method '{method}', will try anyway")
         valid_params = set(hyperparams.keys())
     else:
         valid_params = set(hyper_space[method].keys())
@@ -85,9 +75,12 @@ def run_one(json_path, method, max_repeats=10, overwrite=False, **hyperparams):
     # Filter hyperparameters to only include valid ones for this method
     method_hyperparams = {k: v for k, v in hyperparams.items() if k in valid_params}
     
-    if hyperparams and not method_hyperparams:
-        print(f"Warning: No valid hyperparameters provided for method '{method}'")
-        print(f"  Valid parameters: {sorted(valid_params)}")
+    # Print configuration
+    config = {"max_repeats": max_repeats, **method_hyperparams}
+    print(f"\n{json_path.name}: cotengra_{method} {config}")
+    
+    # Load problem
+    inputs, output, size_dict = load_problem(json_path)
     
     # Create result filename
     optimizer_config = {
@@ -106,18 +99,18 @@ def run_one(json_path, method, max_repeats=10, overwrite=False, **hyperparams):
     
     # Run optimizer
     try:
-        # Create optimizer configuration
+        # Create optimizer configuration (disable parallel to avoid hanging)
         opt_kwargs = {
             'methods': [method],
             'max_repeats': max_repeats,
             'minimize': 'flops',
-            'optlib': 'random'
+            'optlib': 'random',
+            'parallel': False  # Disable parallelization to avoid issues
         }
         
         # Add method-specific configuration if valid hyperparameters are provided
         if method_hyperparams:
             opt_kwargs[f'{method}_conf'] = method_hyperparams
-            print(f"Using hyperparameters: {method_hyperparams}")
         
         opt = ctg.HyperOptimizer(**opt_kwargs)
         
@@ -129,13 +122,17 @@ def run_one(json_path, method, max_repeats=10, overwrite=False, **hyperparams):
         tree = opt.search(inputs, output, size_dict)
         elapsed = time.time() - start
         
-        # Extract results
-        tc = np.log2(tree.contraction_cost())
-        sc = np.log2(tree.max_size)
-        rwc = np.log2(tree.total_write()) + 1  # +1 for read
+        # Extract results - call methods and convert to float first, then log2
+        contraction_cost = float(tree.contraction_cost())
+        max_size = float(tree.max_size())
+        total_write = float(tree.total_write())
+        
+        tc = np.log2(contraction_cost)
+        sc = np.log2(max_size)
+        rwc = np.log2(total_write) + 1  # +1 for read
         
         cc = {"tc": float(tc), "sc": float(sc), "rwc": float(rwc)}
-        print(f"Complexity: {cc}, time: {elapsed:.3f}s")
+        print(f"  -> tc={tc:.2f}, sc={sc:.2f}, rwc={rwc:.2f}, time={elapsed:.3f}s")
         
         # Save result
         result = {
@@ -148,8 +145,6 @@ def run_one(json_path, method, max_repeats=10, overwrite=False, **hyperparams):
         
         with open(result_file, 'w') as f:
             json.dump(result, f)
-        
-        print(f"Saved to: {result_file}")
         
     except Exception as e:
         print(f"Error running {method} on {json_path}: {e}")
@@ -169,86 +164,3 @@ def list_methods():
             print(f"  --{param_name.replace('_', '-')}")
     print("\n" + "=" * 80)
     print(f"Total: {len(hyper_space)} methods")
-
-def main():
-    parser = argparse.ArgumentParser(
-        description='Benchmark cotengra optimizers',
-        epilog='Use --list-methods to see all available methods and their hyperparameters'
-    )
-    parser.add_argument('method', nargs='?', help='Optimizer method (greedy, kahypar, labels, etc.)')
-    parser.add_argument('--list-methods', action='store_true',
-                       help='List all available methods and exit')
-    parser.add_argument('--max-repeats', type=int, default=10, 
-                       help='Number of trials (default: 10)')
-    parser.add_argument('--overwrite', action='store_true',
-                       help='Overwrite existing results')
-    
-    # Common hyperparameters (used by multiple methods)
-    parser.add_argument('--random-strength', type=float,
-                       help='Random strength (greedy, betweenness, kahypar, labels, etc.)')
-    parser.add_argument('--parts', type=int,
-                       help='Number of partitions (kahypar, labels, spinglass, labelprop)')
-    parser.add_argument('--mode', type=str,
-                       help='Partitioning mode (kahypar, labels)')
-    parser.add_argument('--cutoff', type=int,
-                       help='Cutoff parameter (kahypar, labels, spinglass, labelprop)')
-    parser.add_argument('--imbalance', type=float,
-                       help='Imbalance tolerance (kahypar)')
-    
-    # Greedy-specific
-    parser.add_argument('--temperature', type=float,
-                       help='Temperature for greedy method')
-    parser.add_argument('--costmod', type=str,
-                       help='Cost modification tuple for greedy, e.g. "1.0,1.0"')
-    
-    # Other method-specific
-    parser.add_argument('--max-time', type=float,
-                       help='Time limit for quickbb/flowcutter methods (seconds)')
-    parser.add_argument('--steps', type=int,
-                       help='Steps for walktrap method')
-    
-    args = parser.parse_args()
-    
-    # Handle --list-methods
-    if args.list_methods:
-        list_methods()
-        return
-    
-    # Method is required if not listing
-    if not args.method:
-        parser.error("method is required (or use --list-methods)")
-    
-    # Build hyperparameters dict from all non-None arguments
-    hyperparams = {}
-    if args.random_strength is not None:
-        hyperparams['random_strength'] = args.random_strength
-    if args.temperature is not None:
-        hyperparams['temperature'] = args.temperature
-    if args.costmod is not None:
-        hyperparams['costmod'] = tuple(map(float, args.costmod.split(',')))
-    if args.cutoff is not None:
-        hyperparams['cutoff'] = args.cutoff
-    if args.parts is not None:
-        hyperparams['parts'] = args.parts
-    if args.mode is not None:
-        hyperparams['mode'] = args.mode
-    if args.imbalance is not None:
-        hyperparams['imbalance'] = args.imbalance
-    if args.max_time is not None:
-        hyperparams['max_time'] = args.max_time
-    if args.steps is not None:
-        hyperparams['steps'] = args.steps
-    
-    # Load problem list
-    problems = load_config()
-    print(f"Found {len(problems)} problems")
-    
-    # Run benchmarks
-    root_dir = Path(__file__).parent.parent
-    for problem_name, instance_name in problems:
-        json_path = root_dir / "examples" / problem_name / "codes" / instance_name
-        run_one(json_path, args.method, args.max_repeats, args.overwrite, **hyperparams)
-
-if __name__ == '__main__':
-    main()
-

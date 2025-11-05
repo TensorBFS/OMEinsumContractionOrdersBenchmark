@@ -44,8 +44,8 @@
       }
       
       // Define colors and markers for different optimizers
-      let colors = (red, blue, green, purple, orange, black)
-      let markers = ("o", "x", "square", "triangle", "+")
+      let colors = (red, blue, green, purple, orange, black, aqua)
+      let markers = ("o", "x", "square", "triangle", "+", "o")
       
       // Plot each optimizer group (sorted by optimizer name)
       let sorted_optimizers = optimizer_groups.keys().sorted()
@@ -60,6 +60,7 @@
           style: (stroke: none, fill: color),
           mark: marker,
           mark-size: 0.15,
+          mark-style: (fill: color, stroke: color),
           label: optimizer
         )
         i += 1
@@ -90,8 +91,8 @@ Note: the `Treewidth` optimizer is greedy, only a subset of backends (`MF`, `MMD
 #let combined_keys = grouped_data.keys().sorted()
 #for combined_key in combined_keys {
   let dataset = grouped_data.at(combined_key)
-  let a = 1
-  let b = 0
+  let a = 0
+  let b = 1
   let c = 0
   figure(
     canvas(length: 1cm, {

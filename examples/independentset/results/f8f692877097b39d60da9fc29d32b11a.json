@@ -1,0 +1,1 @@
+{"instance": "/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/independentset/codes/ksg.json", "optimizer": "cotengra_greedy", "optimizer_config": {"name": "cotengra_greedy", "kwargs": {"max_repeats": 1}}, "contraction_complexity": {"tc": 67.01289765112169, "sc": 47.0, "rwc": 48.39777875727643}, "time_elapsed": 119.85740447044373}

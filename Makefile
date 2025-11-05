@@ -1,4 +1,4 @@
-JL = julia --project
+JL = julia --project --threads 1
 
 init:
 	$(JL) -e 'using Pkg; Pkg.instantiate()'
@@ -51,7 +51,8 @@ run:
 	$(JL) -e "include(\"runner.jl\"); run([$(optimizer)], overwrite=$${overwrite:-false})"
 
 run-cotengra:
-	cd cotengra && uv run benchmark.py $(method) $(ARGS)
+	@echo "Running cotengra: method=$(method), params=$(params)"
+	cd cotengra && uv run run.py $(method) "$(params)" $${overwrite:-false}
 
 summary:
 	@echo "Summarizing all results (Julia + cotengra)"
