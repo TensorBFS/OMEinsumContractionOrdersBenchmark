@@ -50,7 +50,7 @@
       
       // Define colors and markers for different optimizers
       let colors = (red, blue, green, purple, orange, black, aqua, gray, teal, maroon, navy, olive)
-      let markers = ("o", "x", "square", "triangle", "+")
+      let markers = ("o", "square", "triangle", "o", "square", "+", "x")
       
       // Plot each optimizer group (sorted by optimizer name)
       let sorted_optimizers = optimizer_groups.keys().sorted()
@@ -81,6 +81,8 @@
 #v(20pt)
 
 == Scan Configuration
+
+All benchmarks are performed on CPU: Intel(R) Xeon(R) Gold 6226R CPU \@ 2.90GHz, restricted to single thread.
 
 This report presents benchmarking results for the *sycamore_53_20_0* instance, comparing different tensor network contraction order optimizers with various parameter settings.
 

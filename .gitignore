@@ -4,3 +4,4 @@ Manifest.toml
 examples/einsumorg/instances/
 .CondaPkg/
 uv.lock
+__pycache__/
