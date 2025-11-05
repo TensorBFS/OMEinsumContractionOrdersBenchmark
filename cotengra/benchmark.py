@@ -61,8 +61,12 @@ def param_hash(obj):
     s = json.dumps(obj, sort_keys=True)
     return hashlib.md5(s.encode()).hexdigest()
 
-def run_one(json_path, method, max_repeats=1, overwrite=False, **hyperparams):
-    """Run cotengra optimizer on one problem instance"""
+def run_one(json_path, method, max_repeats=1, minimize='flops', overwrite=False, **hyperparams):
+    """Run cotengra optimizer on one problem instance
+    
+    Args:
+        minimize: cotengra objective - 'flops' (time), 'size' (space), 'write', 'combo'
+    """
     json_path = Path(json_path)
     
     # Get valid hyperparameters for this method from cotengra
@@ -76,7 +80,7 @@ def run_one(json_path, method, max_repeats=1, overwrite=False, **hyperparams):
     method_hyperparams = {k: v for k, v in hyperparams.items() if k in valid_params}
     
     # Print configuration
-    config = {"max_repeats": max_repeats, **method_hyperparams}
+    config = {"max_repeats": max_repeats, "minimize": minimize, **method_hyperparams}
     print(f"\n{json_path.name}: cotengra_{method} {config}")
     
     # Load problem
@@ -85,7 +89,7 @@ def run_one(json_path, method, max_repeats=1, overwrite=False, **hyperparams):
     # Create result filename
     optimizer_config = {
         "name": f"cotengra_{method}",
-        "kwargs": {"max_repeats": max_repeats, **method_hyperparams}
+        "kwargs": {"max_repeats": max_repeats, "minimize": minimize, **method_hyperparams}
     }
     result_hash = param_hash((str(json_path), optimizer_config))
     
@@ -103,7 +107,7 @@ def run_one(json_path, method, max_repeats=1, overwrite=False, **hyperparams):
         opt_kwargs = {
             'methods': [method],
             'max_repeats': max_repeats,
-            'minimize': 'flops',
+            'minimize': minimize,
             'optlib': 'random',
             'parallel': False  # Disable parallelization to avoid issues
         }

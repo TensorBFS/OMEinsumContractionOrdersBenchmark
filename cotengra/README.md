@@ -70,8 +70,14 @@ Number of trials to run. Each trial samples different hyperparameters.
 - **30-50**: Balanced quality
 - **100+**: High-quality, thorough exploration
 
-#### Optimization objective (fixed)
-The optimization objective is **fixed to `"flops"`** (minimize total scalar operations) for consistent benchmarking across all methods and problems.
+#### `minimize` (default: 'flops')
+The optimization objective:
+- **`'flops'`**: Minimize total scalar operations / time complexity (default)
+- **`'size'`**: Minimize maximum intermediate tensor size / space complexity
+- **`'write'`**: Minimize total memory written (sum of all intermediate sizes)
+- **`'combo'`**: Minimize `flops + 64*write` (balanced time+memory)
+
+Example: `method=greedy params="{'minimize': 'size'}" make run-cotengra`
 
 #### `optlib` (default: nothing = optuna)
 Which optimization algorithm to use for hyperparameter search:
@@ -109,7 +115,7 @@ These override the automatic hyperparameter search for those specific parameters
 ### Basic Usage
 
 ```bash
-# Run with default settings (1 trial)
+# Run with default settings (1 trial, minimize='flops')
 method=greedy params={} make run-cotengra
 method=kahypar params={} make run-cotengra
 method=labels params={} make run-cotengra
@@ -118,6 +124,11 @@ method=labels params={} make run-cotengra
 method=greedy params="{'max_repeats': 10}" make run-cotengra
 method=greedy params="{'random_strength': 0.1, 'temperature': 0.5}" make run-cotengra
 method=kahypar params="{'parts': 8, 'imbalance': 0.1}" make run-cotengra
+
+# Different optimization objectives
+method=greedy params="{'minimize': 'size'}" make run-cotengra
+method=greedy params="{'minimize': 'write'}" make run-cotengra
+method=kahypar params="{'minimize': 'combo', 'max_repeats': 10}" make run-cotengra
 ```
 
 ### Scanning Hyperparameters

@@ -83,7 +83,7 @@ Cotengra is a pure Python implementation managed via `uv`. See [`cotengra/README
 
 **Quick usage:**
 ```bash
-# Basic run (default: 1 trial)
+# Basic run (default: 1 trial, minimize='flops')
 method=greedy params={} make run-cotengra
 method=kahypar params={} make run-cotengra
 
@@ -91,6 +91,11 @@ method=kahypar params={} make run-cotengra
 method=greedy params="{'max_repeats': 10}" make run-cotengra
 method=greedy params="{'random_strength': 0.1, 'temperature': 0.5}" make run-cotengra
 method=kahypar params="{'parts': 8, 'imbalance': 0.1}" make run-cotengra
+
+# Different optimization objectives
+method=greedy params="{'minimize': 'size'}" make run-cotengra    # minimize space
+method=greedy params="{'minimize': 'write'}" make run-cotengra   # minimize memory writes
+method=greedy params="{'minimize': 'combo'}" make run-cotengra   # combo of flops+write
 
 # Scan parameters
 for n in 1 5 10 20 50; do method=greedy params="{'max_repeats': $n}" make run-cotengra; done

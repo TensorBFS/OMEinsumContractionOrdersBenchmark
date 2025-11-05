@@ -23,11 +23,12 @@ def main():
     # Run benchmarks
     root_dir = Path(__file__).parent.parent
     max_repeats = params.get('max_repeats', 1)
-    hyperparams = {k: v for k, v in params.items() if k != 'max_repeats'}
+    minimize = params.get('minimize', 'flops')
+    hyperparams = {k: v for k, v in params.items() if k not in ['max_repeats', 'minimize']}
     
     for problem_name, instance_name in problems:
         json_path = root_dir / "examples" / problem_name / "codes" / instance_name
-        run_one(json_path, method, max_repeats, overwrite, **hyperparams)
+        run_one(json_path, method, max_repeats, minimize, overwrite, **hyperparams)
 
 if __name__ == '__main__':
     main()
