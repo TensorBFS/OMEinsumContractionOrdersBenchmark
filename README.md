@@ -100,6 +100,9 @@ method=greedy params="{'minimize': 'combo'}" make run-cotengra   # combo of flop
 # Scan parameters
 for n in 1 5 10 20 50; do method=greedy params="{'max_repeats': $n}" make run-cotengra; done
 for p in 2 4 8 16; do method=kahypar params="{'parts': $p}" make run-cotengra; done
+
+# Run on specific problems only
+method=greedy params="{'problems': [['quantumcircuit', 'sycamore_53_20_0.json']]}" make run-cotengra
 ```
 
 **List available methods and hyperparameters:**

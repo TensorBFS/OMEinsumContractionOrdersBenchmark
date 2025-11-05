@@ -17,15 +17,21 @@ def main():
     from benchmark import run_one, load_config
     
     # Load problem list
-    problems = load_config()
-    print(f"Found {len(problems)} problems")
-    
-    # Run benchmarks
     root_dir = Path(__file__).parent.parent
     max_repeats = params.get('max_repeats', 1)
     minimize = params.get('minimize', 'flops')
-    hyperparams = {k: v for k, v in params.items() if k not in ['max_repeats', 'minimize']}
+    custom_problems = params.get('problems', None)
+    hyperparams = {k: v for k, v in params.items() if k not in ['max_repeats', 'minimize', 'problems']}
     
+    # Use custom problem list if provided, otherwise load from config
+    if custom_problems:
+        problems = custom_problems
+        print(f"Using custom problem list: {len(problems)} problems")
+    else:
+        problems = load_config()
+        print(f"Found {len(problems)} problems")
+    
+    # Run benchmarks
     for problem_name, instance_name in problems:
         json_path = root_dir / "examples" / problem_name / "codes" / instance_name
         run_one(json_path, method, max_repeats, minimize, overwrite, **hyperparams)
