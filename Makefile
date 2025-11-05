@@ -7,6 +7,10 @@ init:
 		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.instantiate()"; \
 	done
 
+init-cotengra:
+	@echo "Installing cotengra dependencies via uv"
+	cd cotengra && uv sync
+
 dev:
 	$(JL) -e 'using Pkg; Pkg.develop("OMEinsumContractionOrders"); Pkg.instantiate()'
 	for case in inference quantumcircuit nqueens independentset qec; do \
@@ -28,6 +32,10 @@ update:
 		$(JL) -e "rootdir=\"examples/$${case}\"; using Pkg; Pkg.activate(rootdir); Pkg.update()"; \
 	done
 
+update-cotengra:
+	@echo "Updating cotengra dependencies via uv"
+	cd cotengra && uv sync --upgrade
+
 generate-codes:
 	for case in inference quantumcircuit nqueens independentset qec; do \
 		echo "Generating codes for $${case}"; \
@@ -42,7 +50,11 @@ run:
 	@echo "Running benchmarks with optimizer: $(optimizer)"
 	$(JL) -e "include(\"runner.jl\"); run([$(optimizer)], overwrite=$${overwrite:-false})"
 
+run-cotengra:
+	cd cotengra && uv run benchmark.py $(method) $(ARGS)
+
 summary:
+	@echo "Summarizing all results (Julia + cotengra)"
 	$(JL) -e "include(\"runner.jl\"); summarize_results()"
 
 clean-results:
@@ -54,4 +66,4 @@ report:
 figures:
 	typst compile --root . figures/sycamore_53_20_0.typ figures/sycamore_53_20_0.svg
 
-.PHONY: init dev free update generate-codes generate-einsumorg-codes run summarize-results clean-results report figures
+.PHONY: init init-cotengra dev free update update-cotengra generate-codes generate-einsumorg-codes run run-cotengra summary clean-results report figures

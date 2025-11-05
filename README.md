@@ -17,6 +17,12 @@ Check the full report: [report.pdf](report.pdf), benchmark results are available
 #### 1. Setup environment
 ```bash
 make init  # install all dependencies for all examples
+make init-cotengra  # install cotengra dependencies via uv
+```
+
+**Prerequisites:** For cotengra benchmarks, you need [`uv`](https://docs.astral.sh/uv/) installed:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 If you want to benchmark with the developed version of `OMEinsumContractionOrders`, run
@@ -32,6 +38,7 @@ make free  # switch back to the released version of OMEinsumContractionOrders
 To update the dependencies of all examples, run
 ```bash
 make update
+make update-cotengra  # update all dependencies for cotengra
 ```
 
 #### 2. Generate tensor network instances
@@ -51,7 +58,9 @@ It will generate a file in the `codes` folder of the `einsumorg` example, named 
 2. Downloading the `instances` dataset from [here](https://zenodo.org/records/11477304) and unpack it in the `examples/einsumorg/instances` folder.
 
 #### 3. Run benchmarks
-To run benchmarks, run
+
+##### Julia optimizers (OMEinsumContractionOrders.jl)
+To run benchmarks with Julia optimizers, run:
 ```bash
 optimizer="Treewidth(alg=MF())" make run
 optimizer="Treewidth(alg=MMD())" make run
@@ -62,14 +71,37 @@ optimizer="HyperND()" make run
 optimizer="HyperND(; dis=METISND(), width=50, imbalances=100:10:800)" make run
 optimizer="HyperND(; dis=KaHyParND(), width=50, imbalances=100:10:800)" make run
 ```
-It will read the `*.json` files in the `codes` folder of each example, and run the benchmarks (twice by default, to avoid just-in-time compilation overhead).
-The runner script is defined in the [`runner.jl`](runner.jl) file.
 
-If you want to run a batch of jobs, just run
+To scan parameters for Julia optimizers:
 ```bash
 for niters in 1 2 4 6 8 10 20 30 40 50; do optimizer="TreeSA(niters=$niters)" make run; done
 for niters in {0..10}; do optimizer="GreedyMethod(α=$niters * 0.1)" make run; done
 ```
+
+##### Cotengra optimizers (Python)
+Cotengra is a pure Python implementation managed via `uv`. See [`cotengra/README.md`](cotengra/README.md) for detailed documentation.
+
+**Quick usage:**
+```bash
+# Basic run (default: 10 trials)
+method=greedy make run-cotengra
+method=kahypar make run-cotengra
+
+# Scan parameters
+for n in 10 20 50 100; do method=greedy ARGS="--max-repeats $n" make run-cotengra; done
+for p in 2 4 8 16; do method=kahypar ARGS="--parts $p" make run-cotengra; done
+```
+
+**List available methods and hyperparameters:**
+```bash
+cd cotengra && uv run benchmark.py --list-methods
+```
+
+See [`cotengra/README.md`](cotengra/README.md) for:
+- Complete list of 9+ optimization methods
+- Hyperparameter explanations for each method
+- Advanced usage examples
+- Installation troubleshooting
 
 If you want to overwrite the existing results, run with argument `overwrite=true`. To remove existing results of all benchmarks, run
 ```bash
@@ -77,11 +109,11 @@ make clean-results
 ```
 
 #### 4. Generate report
-To summarize the results (a necessary step for visualization), run
+To summarize the results (a necessary step for visualization), run:
 ```bash
 make summary
 ```
-It will generate a file named `summary.json` in the root folder, which contains the results of all benchmarks.
+This will generate `summary.json` in the root folder, which contains results from **both** Julia optimizers (OMEinsumContractionOrders) and Python optimizers (cotengra). All cotengra optimizer names are prefixed with `cotengra_` for easy identification.
 
 To visualize the results, [typst](https://typst.app/) >= 0.13 is required. After installing typst just run
 ```bash

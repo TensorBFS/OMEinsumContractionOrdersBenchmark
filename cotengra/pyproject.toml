@@ -1,0 +1,19 @@
+[project]
+name = "cotengra-benchmark"
+version = "0.1.0"
+description = "Cotengra optimizer benchmark for tensor network contractions"
+requires-python = ">=3.10"
+dependencies = [
+    "cotengra>=0.7.5",
+    "numpy>=1.24",
+    "kahypar>=1.3.5",
+]
+
+[project.optional-dependencies]
+fast = [
+    "cotengrust>=0.1.0",  # Rust-accelerated greedy optimizer
+]
+
+[tool.uv]
+package = false
+

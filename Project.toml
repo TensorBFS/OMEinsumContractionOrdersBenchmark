@@ -5,4 +5,4 @@ OMEinsumContractionOrders = "6f22d1fd-8eed-4bb7-9776-e7d684900715"
 
 [compat]
 KaHyPar = "0.3"
-OMEinsumContractionOrders = "0.9"
+OMEinsumContractionOrders = "1"
