@@ -1,1 +1,0 @@
-{"instance": "/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/quantumcircuit/codes/sycamore_53_20_0.json", "optimizer": "cotengra_greedy", "optimizer_config": {"name": "cotengra_greedy", "kwargs": {"max_repeats": 5, "minimize": "size"}}, "contraction_complexity": {"tc": 87.06611153698226, "sc": 62.0, "rwc": 63.332283156961196}, "time_elapsed": 30.19210171699524}

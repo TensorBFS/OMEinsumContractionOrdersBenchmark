@@ -20,6 +20,7 @@ def main():
     root_dir = Path(__file__).parent.parent
     max_repeats = params.get('max_repeats', 1)
     minimize = params.get('minimize', 'flops')
+    reconf_opts = params.get('reconf_opts', {})
     custom_problems = params.get('problems', None)
     hyperparams = {k: v for k, v in params.items() if k not in ['max_repeats', 'minimize', 'problems']}
     
@@ -34,7 +35,7 @@ def main():
     # Run benchmarks
     for problem_name, instance_name in problems:
         json_path = root_dir / "examples" / problem_name / "codes" / instance_name
-        run_one(json_path, method, max_repeats, minimize, overwrite, **hyperparams)
+        run_one(json_path, method, max_repeats, minimize, reconf_opts, overwrite, **hyperparams)
 
 if __name__ == '__main__':
     main()
