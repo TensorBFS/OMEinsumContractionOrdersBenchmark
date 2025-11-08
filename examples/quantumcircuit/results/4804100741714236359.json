@@ -1,0 +1,1 @@
+{"optimizer_config":{"alg":"MMD"},"optimizer":"Treewidth","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/quantumcircuit/codes/sycamore_53_20_0.json","time_elapsed":0.031170986,"contraction_complexity":{"tc":89.09277814229735,"sc":63.0,"rwc":68.09119812682619}}

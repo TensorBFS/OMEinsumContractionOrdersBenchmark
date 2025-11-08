@@ -1,0 +1,1 @@
+{"optimizer_config":{"α":1.0,"temperature":0.0},"optimizer":"GreedyMethod","instance":"/home/leo/jcode/OMEinsumContractionOrdersBenchmark/examples/quantumcircuit/codes/sycamore_53_20_0.json","time_elapsed":0.036776098,"contraction_complexity":{"tc":93.08814648491534,"sc":72.0,"rwc":73.01144618477224}}
