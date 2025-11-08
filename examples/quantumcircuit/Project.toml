@@ -3,5 +3,5 @@ OMEinsumContractionOrders = "6f22d1fd-8eed-4bb7-9776-e7d684900715"
 Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
 
 [compat]
-OMEinsumContractionOrders = "0.9"
+OMEinsumContractionOrders = "1"
 Yao = "0.9"

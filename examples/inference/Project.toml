@@ -3,5 +3,5 @@ OMEinsumContractionOrders = "6f22d1fd-8eed-4bb7-9776-e7d684900715"
 TensorInference = "c2297e78-99bd-40ad-871d-f50e56b81012"
 
 [compat]
-OMEinsumContractionOrders = "0.9"
+OMEinsumContractionOrders = "1"
 TensorInference = "0.6"
