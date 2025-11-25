@@ -4,7 +4,7 @@ import TOML
 
 # pirate the show_json for Base.Order.ForwardOrdering (required by HyperND)!!!!
 JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::Base.Order.ForwardOrdering) = JSON.show_json(io, s, "ForwardOrdering")
-for T in [:MF, :MMD, :AMF, :LexM, :LexBFS, :BFS, :MCS, :RCMMD, :RCMGL, :MCSM]
+for T in [:MF, :MMD, :AMF, :LexM, :LexBFS, :BFS, :MCS, :RCMMD, :RCMGL, :MCSM, :TreeDecomp]
     @eval JSON.show_json(io::JSON.Writer.SC, s::JSON.Writer.CS, ::$(T)) = JSON.show_json(io, s, string($T))
 end
 
@@ -71,8 +71,7 @@ function load_problem_list()
     return problem_list
 end
 
-function run(optimizer_list; overwrite=false)
-    problem_list = load_problem_list()
+function run(optimizer_list; overwrite=false, problem_list = load_problem_list())
     for (problem_name, instance_name) in problem_list
         for optimizer in optimizer_list
             run_one(joinpath(@__DIR__, "examples", problem_name, "codes", instance_name), optimizer; overwrite)

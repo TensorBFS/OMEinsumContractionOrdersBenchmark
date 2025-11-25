@@ -4,13 +4,14 @@ This repository is for benchmarking the performance of different tensor network 
 ## Results
 
 The following figure shows the results of the contraction order optimizers on the `examples/quantumcircuit/codes/sycamore_53_20_0.json` instance.
-![Sycamore 53 20 0](figures/sycamore_53_20_0.svg)
+![Sycamore 53 20 0](figures/sycamore.svg)
 
 - Version: `OMEinsumContractionOrders@v1.0.0`
 - Platform: Ubuntu 24.04 LTS
 - Device: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz 
 
-Check the full report: [report.pdf](report.pdf), benchmark results are available in the `examples/*/results` folder.
+The data for the above figure is available in the `jg/scan-tc` branch in the `examples/*/results` folder.
+Please check the full report: [report.pdf](report.pdf) for more details.
 
 ## Benchmark pipeline
 
@@ -100,6 +101,9 @@ method=greedy params="{'minimize': 'combo'}" make run-cotengra   # combo of flop
 # Scan parameters
 for n in 1 5 10 20 50; do method=greedy params="{'max_repeats': $n}" make run-cotengra; done
 for p in 2 4 8 16; do method=kahypar params="{'parts': $p}" make run-cotengra; done
+
+# Run on specific problems only
+method=greedy params="{'problems': [['quantumcircuit', 'sycamore_53_20_0.json']]}" make run-cotengra
 ```
 
 **List available methods and hyperparameters:**
@@ -154,3 +158,6 @@ The examples are defined in the [`examples`](examples) folder. To add a new exam
     ```
     The `einsum` field is the contraction code with two fields: `ixs` (input labels) and `iy` (output label), and `size` is the size of the tensor indices.
 4. Edit the `config.toml` file to add the new example in the `instances` section.
+
+## Need support?
+Please open an issue on the [issue tracker](https://github.com/TensorBFS/OMEinsumContractionOrdersBenchmark/issues).

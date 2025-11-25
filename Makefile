@@ -54,6 +54,15 @@ run-cotengra:
 	@echo "Running cotengra: method=$(method), params=$(params)"
 	cd cotengra && uv run run.py $(method) "$(params)" $${overwrite:-false}
 
+run1:
+	@echo "Running benchmarks with optimizer: $(optimizer)"
+	$(JL) -e "include(\"runner.jl\"); run([$(optimizer)], overwrite=$${overwrite:-false}, problem_list=[(\"quantumcircuit\", \"sycamore_53_20_0.json\")])"
+
+run1-cotengra:
+	@echo "Running cotengra: method=$(method), params=$(params)"
+	cd cotengra && uv run run.py $(method) "$(params)" $${overwrite:-false}
+
+
 summary:
 	@echo "Summarizing all results (Julia + cotengra)"
 	$(JL) -e "include(\"runner.jl\"); summarize_results()"
@@ -64,7 +73,10 @@ clean-results:
 report:
 	typst compile report.typ report.pdf
 
+report-scan:
+	typst compile report-scan.typ report-scan.pdf
+
 figures:
 	typst compile --root . figures/sycamore_53_20_0.typ figures/sycamore_53_20_0.svg
 
-.PHONY: init init-cotengra dev free update update-cotengra generate-codes generate-einsumorg-codes run run-cotengra summary clean-results report figures
+.PHONY: init init-cotengra dev free update update-cotengra generate-codes generate-einsumorg-codes run run-cotengra summary clean-results report report-scan figures

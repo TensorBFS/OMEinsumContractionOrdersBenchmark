@@ -79,6 +79,11 @@ The optimization objective:
 
 Example: `method=greedy params="{'minimize': 'size'}" make run-cotengra`
 
+#### `problems` (optional)
+Specify a custom problem list instead of using all problems from `config.toml`. Format: list of `[problem_name, instance_file]` tuples.
+
+Example: `method=greedy params="{'problems': [['quantumcircuit', 'sycamore_53_20_0.json']]}" make run-cotengra`
+
 #### `optlib` (default: nothing = optuna)
 Which optimization algorithm to use for hyperparameter search:
 - **`nothing`** (default): Optuna's Tree of Parzen Estimators (high quality, medium speed)
@@ -158,6 +163,10 @@ done
 
 # Multiple parameters at once
 method=greedy params="{'max_repeats': 50, 'temperature': 0.5, 'random_strength': 0.1}" make run-cotengra
+
+# Run on specific problems only (instead of all problems from config.toml)
+method=greedy params="{'problems': [['quantumcircuit', 'sycamore_53_20_0.json']]}" make run-cotengra
+method=kahypar params="{'problems': [['nqueens', 'nqueens_n=28.json'], ['inference', 'DBN_13.json']]}" make run-cotengra
 ```
 
 ### Direct Python Script Usage

@@ -61,11 +61,12 @@ def param_hash(obj):
     s = json.dumps(obj, sort_keys=True)
     return hashlib.md5(s.encode()).hexdigest()
 
-def run_one(json_path, method, max_repeats=1, minimize='flops', overwrite=False, **hyperparams):
+def run_one(json_path, method, max_repeats=1, minimize='flops', reconf_opts={}, overwrite=False, **hyperparams):
     """Run cotengra optimizer on one problem instance
     
     Args:
         minimize: cotengra objective - 'flops' (time), 'size' (space), 'write', 'combo'
+        reconf_opts: dictionary of reconfiguration options for the optimizer (default: {})
     """
     json_path = Path(json_path)
     
@@ -89,7 +90,7 @@ def run_one(json_path, method, max_repeats=1, minimize='flops', overwrite=False,
     # Create result filename
     optimizer_config = {
         "name": f"cotengra_{method}",
-        "kwargs": {"max_repeats": max_repeats, "minimize": minimize, **method_hyperparams}
+        "kwargs": {"max_repeats": max_repeats, "minimize": minimize, "reconf_opts": reconf_opts, **method_hyperparams}
     }
     result_hash = param_hash((str(json_path), optimizer_config))
     
@@ -104,17 +105,48 @@ def run_one(json_path, method, max_repeats=1, minimize='flops', overwrite=False,
     # Run optimizer
     try:
         # Create optimizer configuration (disable parallel to avoid hanging)
+        # When hyperparameters are fixed, we pass them via the space parameter
+        optlib = None if method_hyperparams else 'random'  # None = default optuna
+        
         opt_kwargs = {
             'methods': [method],
             'max_repeats': max_repeats,
             'minimize': minimize,
-            'optlib': 'random',
             'parallel': False  # Disable parallelization to avoid issues
         }
         
-        # Add method-specific configuration if valid hyperparameters are provided
+        # Only set optlib if not using default (when hyperparams are fixed)
+        if optlib is not None:
+            opt_kwargs['optlib'] = optlib
+        
+        # Pass fixed hyperparameters via the space parameter
+        # This creates a space with fixed values for the specified hyperparameters
         if method_hyperparams:
-            opt_kwargs[f'{method}_conf'] = method_hyperparams
+            # Get the full hyperparameter space for this method
+            full_space = ctg.get_hyper_space()[method]
+            # Create a space with fixed values
+            fixed_space = {}
+            for param_name, param_spec in full_space.items():
+                if param_name in method_hyperparams:
+                    # Fixed value - create a single-value range based on type
+                    fixed_value = method_hyperparams[param_name]
+                    param_type = param_spec.get('type', 'FLOAT')
+                    if param_type == 'STRING':
+                        # For strings, use a single-element options list
+                        fixed_space[param_name] = {'type': 'STRING', 'options': [fixed_value]}
+                    elif param_type == 'INT':
+                        fixed_space[param_name] = {'type': 'INT', 'min': fixed_value, 'max': fixed_value}
+                    elif param_type == 'FLOAT' or param_type == 'FLOAT_EXP':
+                        fixed_space[param_name] = {'type': param_type, 'min': fixed_value, 'max': fixed_value}
+                    else:
+                        # Fallback: keep original spec but this shouldn't happen
+                        fixed_space[param_name] = param_spec
+                else:
+                    # Keep the original range/spec
+                    fixed_space[param_name] = param_spec
+            opt_kwargs['space'] = {method: fixed_space}
+            opt_kwargs['max_time'] = 'rate:1e9'
+            opt_kwargs['reconf_opts'] = reconf_opts
         
         opt = ctg.HyperOptimizer(**opt_kwargs)
         
